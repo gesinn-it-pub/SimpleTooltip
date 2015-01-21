@@ -1,3 +1,11 @@
 .simple-tooltip-inline {
     border-bottom: 1px dotted #CCC;
 }
+
+.simple-tooltip-info {
+  display: inline-block;
+  background: url(information.png) no-repeat left bottom;
+  height: 16px;
+  width: 16px;
+  vertical-align: middle;
+}
