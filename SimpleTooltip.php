@@ -80,7 +80,7 @@ $wgHooks['ParserFirstCallInit'][] = 'SimpleTooltipOnParserFirstCallInit';
 //////////////////////////////////////////
 
 /**
-* Add plastic.js library to all pages
+* Add libraries to resource loader
 */
 function SimpleTooltipOnBeforePageDisplay( OutputPage &$out, Skin &$skin ) {
 
@@ -97,9 +97,12 @@ function SimpleTooltipOnBeforePageDisplay( OutputPage &$out, Skin &$skin ) {
 */
 function SimpleTooltipOnParserFirstCallInit( &$parser ) {
 
-  // Register {{#SimpleTooltip }} parser function
+  // Register parser functions
   $parser->setFunctionHook('simple-tooltip', 'SimpleTooltipParserFunction::inlineTooltip');
+  $parser->setFunctionHook('tip-text', 'SimpleTooltipParserFunction::inlineTooltip');
+
   $parser->setFunctionHook('simple-tooltip-info', 'SimpleTooltipParserFunction::infoTooltip');
+  $parser->setFunctionHook('tip-info', 'SimpleTooltipParserFunction::infoTooltip');
 
   return true;
 }

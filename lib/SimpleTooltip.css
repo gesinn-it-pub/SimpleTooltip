@@ -4,10 +4,10 @@
 
 .simple-tooltip-info {
   display: inline-block;
-  background: url(information.png) no-repeat left bottom;
+  background: url(question.png) no-repeat left bottom;
   height: 16px;
   width: 16px;
-  margin: 0 2px;
+  margin: 0 3px;
   vertical-align: middle;
 }
 

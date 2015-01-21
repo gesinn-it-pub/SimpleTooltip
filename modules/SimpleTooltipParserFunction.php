@@ -1,12 +1,11 @@
 <?php
 
 /**
- * Hooks for PlasticMW extension
+ * SimpleTooltip Parser Functions
  *
  * @file
  * @ingroup Extensions
  */
-
 class SimpleTooltipParserFunction {
 
     /**
@@ -23,18 +22,14 @@ class SimpleTooltipParserFunction {
         $title = $args[0] || '';
         $options = '';
 
-        // Check if orientation is given as third parameter
-        if ($args[1]) {
-            $options .= ' data-tooltip-orientation="' . htmlspecialchars($args[1]) . '"';
-        }
 
         //////////////////////////////////////////
         // BUILD HTML                           //
         //////////////////////////////////////////
 
         $html  = '<span class="simple-tooltip simple-tooltip-inline"';
-        $html .= ' title="' . htmlspecialchars($title) . '"';
-        $html .= ' data-simple-tooltip-text="' . htmlspecialchars($title) . '"';
+        // $html .= ' title="' . htmlspecialchars($title) . '"';
+        $html .= ' data-simple-tooltip="' . htmlspecialchars($title) . '"';
         $html .= '>' . htmlspecialchars($value) . '</span>';
 
         return array(
@@ -46,7 +41,7 @@ class SimpleTooltipParserFunction {
     }
 
     /**
-     * Parser function handler for {{#simple-tooltip: tooltip-text }}
+     * Parser function handler for {{#simple-tooltip-info: tooltip-text }}
      *
      * @param Parser $parser
      * @param string $arg
@@ -60,8 +55,8 @@ class SimpleTooltipParserFunction {
         //////////////////////////////////////////
 
         $html = '<span class="simple-tooltip simple-tooltip-info"';
-        $html .= ' title="' . htmlspecialchars($value) . '"';
-        $html .= ' data-simple-tooltip-text="' . htmlspecialchars($value) . '"';
+        // $html .= ' title="' . htmlspecialchars($value) . '"';
+        $html .= ' data-simple-tooltip="' . htmlspecialchars($value) . '"';
         $html .= '></span>';
 
         return array(
