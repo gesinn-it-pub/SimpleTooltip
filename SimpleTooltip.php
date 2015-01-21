@@ -45,11 +45,11 @@ $wgExtensionCredits['other'][] = array(
 
 $wgResourceModules['ext.SimpleTooltip'] = array(
    'scripts' => array(
-      'lib/jquery.powertip.js',
+      'lib/jquery.tooltipster.js',
       'lib/SimpleTooltip.js',
    ),
    'styles' => array(
-      'lib/jquery.powertip.css',
+      'lib/tooltipster.css',
       'lib/SimpleTooltip.css',
    ),
    'dependencies' => array(
