@@ -9,7 +9,7 @@
 class SimpleTooltipParserFunction {
 
     /**
-     * Parser function handler for {{#simple-tooltip: text | tooltip-text }}
+     * Parser function handler for {{#tip-text: inline-text | tooltip-text }}
      *
      * @param Parser $parser
      * @param string $arg
@@ -19,16 +19,13 @@ class SimpleTooltipParserFunction {
     public static function inlineTooltip( $parser, $value /* arg2, arg3, */ ) {
 
         $args = array_slice( func_get_args(), 2 );
-        $title = $args[0] || '';
-        $options = '';
-
+        $title = $args[0];
 
         //////////////////////////////////////////
         // BUILD HTML                           //
         //////////////////////////////////////////
 
         $html  = '<span class="simple-tooltip simple-tooltip-inline"';
-        // $html .= ' title="' . htmlspecialchars($title) . '"';
         $html .= ' data-simple-tooltip="' . htmlspecialchars($title) . '"';
         $html .= '>' . htmlspecialchars($value) . '</span>';
 
@@ -41,7 +38,7 @@ class SimpleTooltipParserFunction {
     }
 
     /**
-     * Parser function handler for {{#simple-tooltip-info: tooltip-text }}
+     * Parser function handler for {{#tip-info: tooltip-text }}
      *
      * @param Parser $parser
      * @param string $arg
@@ -55,7 +52,6 @@ class SimpleTooltipParserFunction {
         //////////////////////////////////////////
 
         $html = '<span class="simple-tooltip simple-tooltip-info"';
-        // $html .= ' title="' . htmlspecialchars($value) . '"';
         $html .= ' data-simple-tooltip="' . htmlspecialchars($value) . '"';
         $html .= '></span>';
 
@@ -71,7 +67,7 @@ class SimpleTooltipParserFunction {
 
 
 /**
- * Helper Logging Function that outputs an object as pretty JSON and kills the PHP process
+ * Logging function that outputs an object as pretty JSON and kills the PHP process
  *
  * @param  [type] $object [description]
  * @return [type]         [description]
