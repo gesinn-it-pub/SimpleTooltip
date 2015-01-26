@@ -1,12 +1,13 @@
 <?php
 /**
- * plastic.js MediaWiki Wrapper
+ * SimpleTooltip Extension
+ * Provides basic tooltips, supporting inline text and info icons
  *
  * For more info see http://mediawiki.org/wiki/Extension:SimpleTooltip
  *
  * @file
  * @ingroup Extensions
- * @author Simon Heimler, 2014
+ * @author Simon Heimler, 2015
  * @license GNU General Public Licence 2.0 or later
  */
 
@@ -33,9 +34,8 @@ $wgExtensionCredits['other'][] = array(
    'path'           => __FILE__,
    'name'           => 'SimpleTooltip',
    'author'         => array('Simon Heimler'),
-   'version'        => '0.0.1',
-   'url'            => 'https://www.mediawiki.org/wiki/Extension:SimpleTooltip',
-   'descriptionmsg' => 'SimpleTooltip-desc',
+   'version'        => '0.1.0',
+   'url'            => 'https://www.mediawiki.org/wiki/Extension:SimpleTooltip'
 );
 
 
@@ -53,6 +53,7 @@ $wgResourceModules['ext.SimpleTooltip'] = array(
       'lib/SimpleTooltip.css',
    ),
    'dependencies' => array(
+      // No dependencies
    ),
    'localBasePath' => __DIR__,
    'remoteExtPath' => 'SimpleTooltip',
