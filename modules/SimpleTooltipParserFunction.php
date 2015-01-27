@@ -52,8 +52,7 @@ class SimpleTooltipParserFunction {
         //////////////////////////////////////////
 
         $html = '<span class="simple-tooltip simple-tooltip-info"';
-        $html .= ' data-simple-tooltip="' . htmlspecialchars($value) . '"';
-        $html .= '></span>';
+        $html .= ' data-simple-tooltip="' . htmlspecialchars($value) . '"></span>';
 
         return array(
             $html,
