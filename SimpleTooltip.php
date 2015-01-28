@@ -7,8 +7,15 @@
  *
  * @file
  * @ingroup Extensions
- * @author Simon Heimler, 2015
- * @license GNU General Public Licence 2.0 or later
+ * @package MediaWiki
+ *
+ * @links https://github.com/Fannon/SimpleTooltip/blob/master/README.md Documentation
+ * @links https://www.mediawiki.org/wiki/Extension_talk:SimpleTooltip Support
+ * @links https://github.com/Fannon/SimpleTooltip/issues Bug tracker
+ * @links https://github.com/Fannon/SimpleTooltip Source code
+ *
+ * @author Simon Heimler (Fannon), 2015
+ * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
 
 //////////////////////////////////////////
@@ -35,7 +42,8 @@ $wgExtensionCredits['other'][] = array(
    'name'           => 'SimpleTooltip',
    'author'         => array('Simon Heimler'),
    'version'        => '0.1.0',
-   'url'            => 'https://www.mediawiki.org/wiki/Extension:SimpleTooltip'
+   'url'            => 'https://www.mediawiki.org/wiki/Extension:SimpleTooltip',
+   'descriptionmsg' => 'simpletooltip-desc',
 );
 
 
