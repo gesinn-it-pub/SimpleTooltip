@@ -11,6 +11,15 @@
   vertical-align: middle;
 }
 
+.simple-tooltip-img {
+  display: inline-block;
+  height: auto;
+  width: auto;
+  vertical-align: bottom;
+  border: 1px dotted #CCC;
+  padding: 2px;
+}
+
 .tooltipster-default {
     border-radius: 5px;
     border: none;

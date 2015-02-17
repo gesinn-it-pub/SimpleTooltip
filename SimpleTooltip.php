@@ -113,6 +113,9 @@ function SimpleTooltipOnParserFirstCallInit( &$parser ) {
   $parser->setFunctionHook('simple-tooltip-info', 'SimpleTooltipParserFunction::infoTooltip');
   $parser->setFunctionHook('tip-info', 'SimpleTooltipParserFunction::infoTooltip');
 
+  $parser->setFunctionHook('simple-tooltip-img', 'SimpleTooltipParserFunction::imgTooltip');
+  $parser->setFunctionHook('tip-img', 'SimpleTooltipParserFunction::imgTooltip');
+
   return true;
 }
 
