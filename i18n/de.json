@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Fannon",
 			"Kghbln"
 		]
 	},
-	"simpletooltip-desc": "Eine einfache Tooltip Extension die inline-text und info-icons unterstützt."
+	"simpletooltip-desc": "Ermöglicht Tooltips die Infotexte und Infosymbole unterstützen"
 }
