@@ -3,7 +3,7 @@
  * SimpleTooltip Extension
  * Provides basic tooltips, supporting inline text and info icons
  *
- * For more info see http://mediawiki.org/wiki/Extension:SimpleTooltip
+ * For more info see https://mediawiki.org/wiki/Extension:SimpleTooltip
  *
  * @file
  * @ingroup Extensions
@@ -40,10 +40,11 @@ $wgSimpleTooltipSubmitText = 'NEW';
 $wgExtensionCredits['other'][] = array(
    'path'           => __FILE__,
    'name'           => 'SimpleTooltip',
-   'author'         => array('Simon Heimler'),
+   'author'         => array( 'Simon Heimler' ),
    'version'        => '0.1.0',
    'url'            => 'https://www.mediawiki.org/wiki/Extension:SimpleTooltip',
    'descriptionmsg' => 'simpletooltip-desc',
+   'license-name'   => 'MIT'
 );
 
 
@@ -118,4 +119,3 @@ function SimpleTooltipOnParserFirstCallInit( &$parser ) {
 
   return true;
 }
-
