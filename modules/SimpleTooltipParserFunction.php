@@ -93,16 +93,3 @@ class SimpleTooltipParserFunction {
     }
 
 }
-
-
-/**
- * Logging function that outputs an object as pretty JSON and kills the PHP process
- *
- * @param  [type] $object [description]
- * @return [type]         [description]
- */
-function jlog($object) {
-    header('Content-Type: application/json');
-    print(json_encode($object, JSON_PRETTY_PRINT));
-    die();
-}
