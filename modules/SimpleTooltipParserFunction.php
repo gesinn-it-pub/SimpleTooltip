@@ -26,7 +26,7 @@ class SimpleTooltipParserFunction {
         //////////////////////////////////////////
 
         $html  = '<span class="simple-tooltip simple-tooltip-inline"';
-        $html .= ' data-simple-tooltip="' . htmlspecialchars($title) . '"';
+        $html .= ' data-simple-tooltip="' . htmlspecialchars(Sanitizer::removeHTMLtags($title)) . '"';
         $html .= '>' . htmlspecialchars($value) . '</span>';
 
         return array(
@@ -52,7 +52,7 @@ class SimpleTooltipParserFunction {
         //////////////////////////////////////////
 
         $html = '<span class="simple-tooltip simple-tooltip-info"';
-        $html .= ' data-simple-tooltip="' . htmlspecialchars($value) . '"></span>';
+        $html .= ' data-simple-tooltip="' . htmlspecialchars(Sanitizer::removeHTMLtags($value)) . '"></span>';
 
         return array(
             $html,
@@ -81,7 +81,7 @@ class SimpleTooltipParserFunction {
         //////////////////////////////////////////
 
         $html  = '<img class="simple-tooltip simple-tooltip-img"';
-        $html .= ' data-simple-tooltip="' . htmlspecialchars($title) . '"';
+        $html .= ' data-simple-tooltip="' . htmlspecialchars(Sanitizer::removeHTMLtags($title)) . '"';
         $html .= ' src="' . $imgUrl . '"></img>';
 
         return array(
