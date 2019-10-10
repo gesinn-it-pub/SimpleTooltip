@@ -25,8 +25,14 @@ class SimpleTooltipParserFunction {
         // BUILD HTML                           //
         //////////////////////////////////////////
 
+		$content = Sanitizer::removeHTMLtags( $title );
+		$content = $parser->recursiveTagParseFully( $content );
+		$content = str_replace('"', "'", $content);
+		$content = trim( $content );
+		$content = htmlspecialchars( $content );
+
         $html  = '<span class="simple-tooltip simple-tooltip-inline"';
-        $html .= ' data-simple-tooltip="' . htmlspecialchars(Sanitizer::removeHTMLtags($title)) . '"';
+        $html .= ' data-simple-tooltip="' . $content . '"';
         $html .= '>' . htmlspecialchars($value) . '</span>';
 
         return array(
