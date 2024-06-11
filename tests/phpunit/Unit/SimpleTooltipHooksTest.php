@@ -17,10 +17,13 @@ use SimpleTooltipHooks;
 
 /**
  * @group SimpleTooltip
- * 
+ *
  */
 class SimpleTooltipHooksTest extends TestCase {
 
+	/**
+	 * @covers SimpleTooltipHooks::inlineTooltip
+	 */
 	public function testInlineTooltip() {
 		// Create a mock for the Parser class
 		$parserMock = $this->getMockBuilder(Parser::class)
@@ -41,6 +44,9 @@ class SimpleTooltipHooksTest extends TestCase {
 
 	}
 
+	/**
+	 * @covers SimpleTooltipHooks::infoTooltip
+	 */
 	public function testInfoTooltip() {
 		// Create a mock for the Parser class
 		$parserMock = $this->getMockBuilder(Parser::class)
@@ -55,6 +61,9 @@ class SimpleTooltipHooksTest extends TestCase {
 		$this->assertEquals($expectedHtml, $tooltip[0]);
 	}
 
+	/**
+	 * @covers SimpleTooltipHooks::imgTooltip
+	 */
 	public function testImgTooltip() {
 		// Create a mock for the Parser class
 		$parserMock = $this->getMockBuilder(Parser::class)
