@@ -11,8 +11,8 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
 use Parser;
+use PHPUnit\Framework\TestCase;
 use SimpleTooltipHooks;
 
 /**
