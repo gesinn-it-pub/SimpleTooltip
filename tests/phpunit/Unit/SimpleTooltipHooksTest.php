@@ -39,9 +39,9 @@ class SimpleTooltipHooksTest extends TestCase {
 		$tooltip = SimpleTooltipHooks::inlineTooltip($parserMock, 'Inline text', 'Tooltip text');
 
 		// Assert that the returned HTML contains the expected tooltip content
-		$expectedHtml = '<span class="simple-tooltip simple-tooltip-inline" data-simple-tooltip="Tooltip content">Inline text</span>';
+		$expectedHtml = '<span class="simple-tooltip simple-tooltip-inline" ' . 
+						'data-simple-tooltip="Tooltip content">Inline text</span>';
 		$this->assertEquals($expectedHtml, $tooltip[0]);
-
 	}
 
 	/**
@@ -74,7 +74,8 @@ class SimpleTooltipHooksTest extends TestCase {
 		$tooltip = SimpleTooltipHooks::imgTooltip($parserMock, 'Image URL', 'Tooltip text');
 
 		// Assert that the returned HTML contains the expected tooltip content
-		$expectedHtml = '<img class="simple-tooltip simple-tooltip-img" data-simple-tooltip="Tooltip text" src="Image URL"></img>';
+		$expectedHtml = '<img class="simple-tooltip simple-tooltip-img" ' . 
+						'data-simple-tooltip="Tooltip text" src="Image URL"></img>';
 		$this->assertEquals($expectedHtml, $tooltip[0]);
 	}
 }
