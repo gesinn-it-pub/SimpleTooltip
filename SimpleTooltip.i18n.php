@@ -11,7 +11,15 @@
  */
 $messages = [];
 if ( !function_exists( 'wfJsonI18nShimSimpleTooltip' ) ) {
-	function wfJsonI18nShimSimpleTooltip( $cache, $code, &$cachedData ) {
+	/**
+	 * function for maintaining compatibility
+	 *
+	 * @param array $code
+	 * @param array &$cachedData
+	 *
+	 * @return bool true or false
+	 */
+	function wfJsonI18nShimSimpleTooltip( $code, &$cachedData ) {
 		$codeSequence = array_merge( [ $code ], $cachedData['fallbackSequence'] );
 		foreach ( $codeSequence as $csCode ) {
 			$fileName = __DIR__ . "/i18n/$csCode.json";
