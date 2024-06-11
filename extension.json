@@ -1,0 +1,55 @@
+{
+	"name": "SimpleTooltip",
+	"version": "1.2.0",
+	"author": [
+        "Marko Ilic"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:SimpleTooltip",
+	"descriptionmsg": "simpletooltip-desc",
+	"license-name": "MIT",
+	"type": "parserhook",
+	"requires": {
+		"MediaWiki": ">= 1.38.0"
+	},
+	"MessagesDirs": {
+		"SimpleTooltip": [
+			"i18n"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"SimpleTooltipMagic": "SimpleTooltip.i18n.magic.php"
+	},
+	"AutoloadClasses": {
+		"SimpleTooltipHooks": "src/SimpleTooltipHooks.php"
+	},
+	"ResourceModules": {
+		"ext.SimpleTooltip": {
+			"targets": [
+				"mobile",
+				"desktop"
+			],
+			"scripts": [
+				"lib/jquery.tooltipster.js",
+				"lib/SimpleTooltip.js"
+			],
+			"styles": [
+				"lib/tooltipster.css",
+				"lib/SimpleTooltip.css"
+			]
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "SimpleTooltip"
+	},
+	"config": {
+		"SimpleTooltipSubmitText": {
+			"value": "NEW"
+		}
+	},
+	"Hooks": {
+		"BeforePageDisplay": "SimpleTooltipHooks::onBeforePageDisplay",
+		"ParserFirstCallInit": "SimpleTooltipHooks::onParserFirstCallInit"
+	},
+	"manifest_version": 2
+}
