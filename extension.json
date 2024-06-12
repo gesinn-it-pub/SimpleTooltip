@@ -1,15 +1,16 @@
 {
 	"name": "SimpleTooltip",
-	"version": "1.2.0",
+	"version": "2.0.0",
 	"author": [
-        "Marko Ilic"
+		"Simon Heimler",
+		"Marko Ilic (gesinn.it GmbH & Co. KG)"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:SimpleTooltip",
 	"descriptionmsg": "simpletooltip-desc",
 	"license-name": "MIT",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.38.0"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"MessagesDirs": {
 		"SimpleTooltip": [
