@@ -32,7 +32,6 @@ if ( !function_exists( 'wfJsonI18nShimSimpleTooltip' ) ) {
 				}
 				$cachedData['messages'] = array_merge( $data, $cachedData['messages'] );
 			}
-
 			$cachedData['deps'][] = new FileDependency( $fileName );
 		}
 		return true;
