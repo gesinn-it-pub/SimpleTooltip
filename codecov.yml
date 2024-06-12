@@ -1,0 +1,5 @@
+version: 2
+
+codecov:
+  coverage_files:
+    - "coverage/php/coverage.xml"   # Adjust the path if necessary
