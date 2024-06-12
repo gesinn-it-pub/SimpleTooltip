@@ -1,6 +1,7 @@
 = Simple Tooltip
 
 image:https://github.com/gesinn-it-pub/SimpleTooltip/actions/workflows/ci.yml/badge.svg[CI,link=https://github.com/gesinn-it-pub/SimpleTooltip/actions/workflows/ci.yml]
+image:https://codecov.io/github/gesinn-it-pub/SimpleTooltip/graph/badge.svg?token=hmfXuxLJC8[Codecov]
 
 This is a [MediaWiki Extension](https://www.mediawiki.org/wiki/Extension:SimpleTooltip) that adds basic tooltip capabilities. For Documentation see: https://www.mediawiki.org/wiki/Extension:SimpleTooltip
 
