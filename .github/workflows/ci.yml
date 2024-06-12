@@ -64,7 +64,7 @@ jobs:
         if: matrix.coverage == true
 
       - name: Upload code coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3
         with:
           files: coverage/php/coverage.xml
         if: matrix.coverage == true
