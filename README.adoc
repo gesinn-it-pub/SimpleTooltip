@@ -18,7 +18,7 @@ We welcome contributions from the community to help make {project_name} better! 
 
 We try to follow the https://www.conventionalcommits.org/[Conventional Commits specification] for issues and commit messages to create good and meaningful change logs.
 
-For detailed information, see our link:++contributing guidelines.adoc++[Contributing Guidelines].
+For detailed information, see our link:++gesinn-it-docs-master-pub/contributing/contributing guidelines.adoc++[Contributing Guidelines].
 
 == Attribution
 Uses the http://iamceege.github.io/tooltipster/[Tooltipster Library] and https://github.com/yusukekamiyamane/fugue-icons[Fugue Icons]
