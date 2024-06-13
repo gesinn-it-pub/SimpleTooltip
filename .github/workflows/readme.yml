@@ -20,6 +20,8 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: 'true'
 
       - name: Reduce readme
         run: asciidoctor-reducer -o README.adoc README-source.adoc
