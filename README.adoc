@@ -9,9 +9,16 @@ image:https://codecov.io/github/gesinn-it-pub/SimpleTooltip/graph/badge.svg?toke
 == Documentation
 For documentation see: https://www.mediawiki.org/wiki/Extension:SimpleTooltip
 
-Unresolved directive in README-source.adoc - include::docs/gesinn-it-docs-master-pub/general/semver.adoc[]
+== Versioning
 
-Unresolved directive in README-source.adoc - include::docs/gesinn-it-docs-master-pub/contributing/contributing.adoc[]
+We use http://semver.org/[SemVer] for versioning. See the tags in this repository for  available versions.
+
+== Contributing
+We welcome contributions from the community to help make {project_name} better! Whether you're fixing bugs, adding new features, improving documentation, or anything else, your efforts are valuable.
+
+We try to follow the https://www.conventionalcommits.org/[Conventional Commits specification] for issues and commit messages to create good and meaningful change logs.
+
+For detailed information, see our link:++contributing guidelines.adoc++[Contributing Guidelines].
 
 == Attribution
 Uses the http://iamceege.github.io/tooltipster/[Tooltipster Library] and https://github.com/yusukekamiyamane/fugue-icons[Fugue Icons]
