@@ -18,7 +18,95 @@ We welcome contributions from the community to help make {project_name} better! 
 
 We try to follow the https://www.conventionalcommits.org/[Conventional Commits specification] for issues and commit messages to create good and meaningful change logs.
 
-For detailed information, see our link:++gesinn-it-docs-master-pub/contributing/contributing guidelines.adoc++[Contributing Guidelines].
+[NOTE]
+====
+The repository contains
+https://git-scm.com/book/en/v2/Git-Tools-Submodules[submodules]. Make
+sure to clone with `--recursive` option in Git or by checking the
+'`Recursive`' checkbox in TortoiseGit.
+
+....
+> git clone --recursive <REPO>
+....
+
+If not done when cloning, it can be done by
+
+....
+> git submodule init
+> git submodule update
+....
+====
+
+.Click to see detailed *Contributing Guidelines*
+[%collapsible]
+====
+*Step 1: Clone the Repository*
+
+Fork and clone our repo to your local machine:
+
+[source,console]
+----
+git clone https://github.com/username/projectname.git --recursive
+----
+
+*Step 2: Ensure test container is running*
+
+This repository supports https://github.com/gesinn-it-pub/docker-compose-ci[_"docker-compose-ci"_ based CI and testing for MediaWiki extensions].
+
+The _docker-compose-ci_ repository has already been integrated into the {project_name} repository as a Git submodule. It uses https://en.wikipedia.org/wiki/Make_(software)[_"Make"_] as main entry point and command line interface.
+
+Ensure, you have `Make` and `Docker` installed:
+
+[source,console]
+----
+make --version
+docker --version
+----
+
+Run lint, phpcs and tests:
+
+[source,console]
+----
+make ci
+----
+
+*Step 3: Start coding*
+
+Make sure there is an issue that describes your changes. Create a new branch and start working on your changes. In _issue-1234_ replace _1234_ with your issue number:
+
+[source,console]
+----
+git checkout -b issue-1234
+----
+
+*Step 4: Test your changes*
+
+Ensure that your changes include adequate testing where applicable.
+
+Run lint, phpcs and tests:
+
+[source,console]
+----
+make ci
+----
+
+*Step 5: Commit your changes*
+
+Make sure your commits are well-documented. Try to follow the https://www.conventionalcommits.org/[Conventional Commits specification] to help us writing good and meaningful change logs.
+
+[source,console]
+----
+git commit -m "Description of your changes"
+----
+
+*Step 6: Push!*
+Push your branch and open a pull request.
+
+[source,console]
+----
+git push origin feature/your-feature-name
+----
+====
 
 == Attribution
 Uses the http://iamceege.github.io/tooltipster/[Tooltipster Library] and https://github.com/yusukekamiyamane/fugue-icons[Fugue Icons]
