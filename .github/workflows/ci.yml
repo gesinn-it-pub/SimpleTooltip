@@ -25,7 +25,7 @@ jobs:
             database_type: mysql
             database_image: "mysql:8"
             coverage: false
-            experimental: true
+            experimental: false
           - mediawiki_version: '1.40'
             smw_version: dev-master
             php_version: 8.1
@@ -34,7 +34,16 @@ jobs:
             database_type: mysql
             database_image: "mysql:8"
             coverage: true
-            experimental: true
+            experimental: false
+          - mediawiki_version: '1.41'
+            smw_version: '4.1.3'
+            php_version: 8.1
+            dt_version: 4.0.2
+            ps_version: 0.8
+            database_type: mysql
+            database_image: "mysql:8"
+            coverage: false
+            experimental: false
 
     env:
       MW_VERSION: ${{ matrix.mediawiki_version }}
