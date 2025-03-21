@@ -14,7 +14,7 @@ include::docs/gesinn-it-docs-master-pub/general/semver.adoc[]
 include::docs/gesinn-it-docs-master-pub/contributing/contributing.adoc[]
 
 == Attribution
-Uses the http://iamceege.github.io/tooltipster/[Tooltipster Library] and https://github.com/yusukekamiyamane/fugue-icons[Fugue Icons]
+Uses the https://calebjacob.github.io/tooltipster/[Tooltipster Library] and https://github.com/yusukekamiyamane/fugue-icons[Fugue Icons]
 
 ---
 This extension is part of https://semantic.wiki/core[*semantic::core*] - Enterprise Class MediaWiki distribution.
