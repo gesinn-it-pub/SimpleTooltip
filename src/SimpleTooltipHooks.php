@@ -45,7 +45,7 @@ class SimpleTooltipHooks {
 		}
 
 		$content = Sanitizer::removeSomeTags( $title );
-		$content = $parser->recursiveTagParseFully( $content );
+		$content = $parser->recursiveTagParse( $content );
 		$content = str_replace( '"', "'", $content );
 		$content = trim( $content );
 		$content = htmlspecialchars( $content );
