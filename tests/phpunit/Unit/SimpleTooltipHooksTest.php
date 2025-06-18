@@ -30,9 +30,9 @@ class SimpleTooltipHooksTest extends TestCase {
 							->disableOriginalConstructor()
 							->getMock();
 
-		// Set up the mock behavior for recursiveTagParseFully
+		// Set up the mock behavior for recursiveTagParse
 		$parserMock->expects( $this->once() )
-					->method( 'recursiveTagParseFully' )
+					->method( 'recursiveTagParse' )
 					->willReturn( 'Tooltip content' );
 
 		// Call the inlineTooltip method with some test values
