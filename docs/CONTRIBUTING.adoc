@@ -255,6 +255,10 @@ ResourceLoader natively compiles `.less` files; prefer LESS over plain CSS.
 
 == Step 4: Test your changes
 
+'''
+
+*Test-first approach*
+
 Before making any code changes to fix a bug or implement a feature:
 
 . Check whether an existing test already covers the described behavior.
@@ -262,7 +266,9 @@ Before making any code changes to fix a bug or implement a feature:
 . Only after a failing test exists, make the code changes.
 . Re-run the test to confirm it passes (green).
 
-*Test-first approach*
+'''
+
+*Test environment setup*
 
 All tests run inside a containerized MediaWiki environment managed via
 https://github.com/gesinn-it-pub/docker-compose-ci[docker-compose-ci] (the `build/` submodule).
@@ -276,6 +282,8 @@ host are *not* automatically reflected in a running container.
 ----
 make install
 ----
+
+'''
 
 *PHPUnit tests*
 
@@ -308,6 +316,8 @@ make bash
 > composer phpunit -- --filter YourTestName
 ----
 
+'''
+
 *Node QUnit tests*
 
 Run all JavaScript tests:
@@ -333,6 +343,8 @@ Filter by test description:
 make bash
 > npx qunit --require ./tests/node-qunit/setup.js 'tests/node-qunit/**/*.test.js' --filter "your test description"
 ----
+
+'''
 
 *Pre-commit validation gate*
 

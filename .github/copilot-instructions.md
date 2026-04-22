@@ -271,6 +271,8 @@ LESS over plain CSS.
 
 # Test Workflow
 
+**Test-first approach**
+
 Before making any code changes to fix a bug or implement a feature:
 
 1.  Check whether an existing test already covers the described
@@ -283,7 +285,7 @@ Before making any code changes to fix a bug or implement a feature:
 
 4.  Re-run the test to confirm it passes (green).
 
-**Test-first approach**
+**Test environment setup**
 
 All tests run inside a containerized MediaWiki environment managed via
 [docker-compose-ci](https://github.com/gesinn-it-pub/docker-compose-ci)
