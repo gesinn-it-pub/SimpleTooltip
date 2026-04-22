@@ -4,6 +4,6 @@
 // workflow .github/workflows/copilot-instructions.yml.
 // NEVER edit or regenerate copilot-instructions.md manually.
 // ============================================================
-:project_type: mediawiki
+include::../docs/attributes.adoc[]
 
-include::../docs/gesinn-it-docs-master-pub/documents/mediawiki/copilot-instructions.adoc[]
+include::../docs/gesinn-it-docs-master-pub/documents/{project_type}/copilot-instructions.adoc[]

@@ -4,6 +4,6 @@
 // workflow .github/workflows/contributing.yml.
 // NEVER edit or regenerate CONTRIBUTING.adoc manually.
 // ============================================================
-:project_name: SimpleTooltip
+include::attributes.adoc[]
 
-include::gesinn-it-docs-master-pub/documents/mediawiki/contributing.adoc[]
+include::gesinn-it-docs-master-pub/documents/{project_type}/contributing.adoc[]

@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - README-source.adoc
+      - docs/attributes.adoc
       - docs/gesinn-it-docs-master-pub
       - docs/gesinn-it-docs-master-pub/**
     branches:

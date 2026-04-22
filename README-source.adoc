@@ -1,4 +1,4 @@
-:project_name: SimpleTooltip
+include::docs/attributes.adoc[]
 = {project_name}
 
 image:https://github.com/gesinn-it-pub/SimpleTooltip/actions/workflows/ci.yml/badge.svg[CI,link=https://github.com/gesinn-it-pub/SimpleTooltip/actions/workflows/ci.yml]

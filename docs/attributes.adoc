@@ -1,0 +1,2 @@
+:project_name: SimpleTooltip
+:project_type: mediawiki
