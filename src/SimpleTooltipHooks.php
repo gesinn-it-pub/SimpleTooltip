@@ -1,5 +1,7 @@
 <?php
 
+declare( strict_types=1 );
+
 class SimpleTooltipHooks {
 	/**
 	 * Add libraries to resource loader
@@ -7,7 +9,7 @@ class SimpleTooltipHooks {
 	 * @param OutputPage $out
 	 * @param Skin $skin
 	 */
-	public static function onBeforePageDisplay( OutputPage $out, Skin $skin ) {
+	public static function onBeforePageDisplay( OutputPage $out, Skin $skin ): void {
 		// Add as ResourceLoader Module
 		$out->addModules( 'ext.SimpleTooltip' );
 	}
@@ -17,7 +19,7 @@ class SimpleTooltipHooks {
 	 *
 	 * @param Parser $parser
 	 */
-	public static function onParserFirstCallInit( Parser $parser ) {
+	public static function onParserFirstCallInit( Parser $parser ): void {
 		// Register parser functions
 		$parser->setFunctionHook( 'simple-tooltip', [ __CLASS__, 'inlineTooltip' ] );
 		$parser->setFunctionHook( 'tip-text', [ __CLASS__, 'inlineTooltip' ] );
@@ -36,7 +38,7 @@ class SimpleTooltipHooks {
 	 * @param string $value
 	 * @return array
 	 */
-	public static function inlineTooltip( Parser $parser, string $value ) {
+	public static function inlineTooltip( Parser $parser, string $value ): array {
 		$args = array_slice( func_get_args(), 2 );
 		$title = $args[0];
 
@@ -70,7 +72,7 @@ class SimpleTooltipHooks {
 	 * @param string $value
 	 * @return array
 	 */
-	public static function infoTooltip( Parser $parser, string $value ) {
+	public static function infoTooltip( Parser $parser, string $value ): array {
 		if ( !$value ) {
 			return [];
 		}
@@ -94,7 +96,7 @@ class SimpleTooltipHooks {
 	 * @param string $value
 	 * @return array
 	 */
-	public static function imgTooltip( Parser $parser, string $value ) {
+	public static function imgTooltip( Parser $parser, string $value ): array {
 		$args = array_slice( func_get_args(), 2 );
 		$title = $args[0];
 

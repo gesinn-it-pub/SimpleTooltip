@@ -1,4 +1,7 @@
 <?php
+
+declare( strict_types=1 );
+
 /**
  * This is a backwards-compatibility shim for message internationalization
  *
