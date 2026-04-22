@@ -3,14 +3,17 @@
 	"private": true,
 	"scripts": {
 		"test": "npm run lint:js && npm run node-qunit",
+		"test-coverage": "npm run lint:js && npm run node-qunit-coverage",
 		"lint:js": "eslint lib/SimpleTooltip.js tests/node-qunit/",
-		"node-qunit": "qunit --require ./tests/node-qunit/setup.js 'tests/node-qunit/*.test.js'"
+		"node-qunit": "qunit --require ./tests/node-qunit/setup.js 'tests/node-qunit/*.test.js'",
+		"node-qunit-coverage": "nyc --reporter=text --reporter=html --reporter=clover --all --include='lib/SimpleTooltip.js' --report-dir=coverage/js npm run node-qunit"
 	},
 	"devDependencies": {
 		"eslint": "^8.57.0",
 		"eslint-config-wikimedia": "0.32.3",
 		"jsdom": "^20.0.3",
 		"jquery": "^3.7.1",
+		"nyc": "^15.1.0",
 		"qunit": "^2.21.0"
 	}
 }
