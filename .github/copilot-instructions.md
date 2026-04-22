@@ -123,6 +123,32 @@ Tooling: [Phan](https://github.com/phan/phan) with
 [mediawiki-phan-config](https://github.com/wikimedia/mediawiki-phan-config).
 Run locally: `make composer-phan` (or `make dev-test`).
 
+**Setup**
+
+Add the Phan script to `composer.json`:
+
+``` json
+"scripts": {
+    "phan": "phan --allow-polyfill-parser"
+}
+```
+
+<div class="note">
+
+`--allow-polyfill-parser` activates a pure-PHP AST fallback. Required
+when the native `php-ast` extension is not available (e.g. Debian trixie
+/ PHP 8.3 where `php-ast` has no apt package). Without this flag Phan
+exits immediately if `php-ast` is absent.
+
+</div>
+
+Add the `composer-phan` target to the extension `Makefile`:
+
+``` makefile
+composer-phan: ## Run Phan static analysis
+    $(DOCKER_EXEC) composer phan
+```
+
 **Configuration**
 
 `.phan/config.php` inherits from `mediawiki-phan-config`:
