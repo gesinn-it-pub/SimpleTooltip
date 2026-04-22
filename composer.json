@@ -27,6 +27,7 @@
 		"lint": "parallel-lint . --exclude vendor --exclude node_modules",
 		"phpcs": "phpcs -ps",
 		"phpcs-fix": "phpcbf -p",
+		"phan": "phan -d . --long-progress-bar --allow-polyfill-parser",
 		"phpunit": "php ../../tests/phpunit/phpunit.php -c phpunit.xml.dist --testdox",
 		"phpunit-coverage": "php ../../tests/phpunit/phpunit.php -c phpunit.xml.dist --testdox --coverage-text --coverage-html coverage/php --coverage-clover coverage/php/coverage.xml",
 		"minus-x": "minus-x check ."
