@@ -3,8 +3,14 @@ name: CI
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - '**/*.adoc'
+      - '.github/copilot-instructions.md'
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - '**/*.adoc'
+      - '.github/copilot-instructions.md'
   workflow_dispatch:
 
 jobs:
