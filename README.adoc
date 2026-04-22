@@ -2,6 +2,7 @@
 // Edit README-source.adoc instead.
 
 :project_name: SimpleTooltip
+:project_type: mediawiki
 = {project_name}
 
 image:https://github.com/gesinn-it-pub/SimpleTooltip/actions/workflows/ci.yml/badge.svg[CI,link=https://github.com/gesinn-it-pub/SimpleTooltip/actions/workflows/ci.yml]
