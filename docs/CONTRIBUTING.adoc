@@ -345,6 +345,8 @@ make ci
 
 == Step 5: Commit your changes
 
+:leveloffset: +1
+
 == Conventional Commits Policy
 
 Commit messages follow the https://www.conventionalcommits.org/[Conventional Commits specification].
@@ -393,6 +395,8 @@ Guidelines:
 * Use the commit body to explain *why*, not only *what*
 * Scopes should be short, lowercase identifiers (e.g. `api`, `parser`, `smw`, `mediawiki`, `docker`)
 * Use `chore` only for repository maintenance tasks that do not affect runtime behavior, dependencies, CI configuration, or tests
+
+:leveloffset!:
 
 [source,console]
 ----
