@@ -5,5 +5,19 @@
 		"wikimedia/jquery",
 		"wikimedia/mediawiki"
 	],
-	"env": { "commonjs": true }
+	"env": { "commonjs": true },
+	"overrides": [
+		{
+			"files": [ "tests/node-qunit/**/*.js" ],
+			"env": {
+				"node": true
+			},
+			"globals": {
+				"QUnit": "readonly"
+			},
+			"rules": {
+				"no-jquery/variable-pattern": "off"
+			}
+		}
+	]
 }
