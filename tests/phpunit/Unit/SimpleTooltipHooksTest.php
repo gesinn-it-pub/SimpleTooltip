@@ -14,9 +14,9 @@ declare( strict_types=1 );
 
 namespace Tests\Unit;
 
+use MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks;
 use Parser;
 use PHPUnit\Framework\TestCase;
-use SimpleTooltipHooks;
 
 /**
  * @group SimpleTooltip

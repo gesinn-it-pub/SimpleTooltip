@@ -32,6 +32,11 @@
 		"phpunit-coverage": "php ../../tests/phpunit/phpunit.php -c phpunit.xml.dist --testdox --coverage-text --coverage-html coverage/php --coverage-clover coverage/php/coverage.xml",
 		"minus-x": "minus-x check ."
 	},
+	"autoload": {
+		"psr-4": {
+			"MediaWiki\\Extension\\SimpleTooltip\\": "src/"
+		}
+	},
 	"config": {
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true

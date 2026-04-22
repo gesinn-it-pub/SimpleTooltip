@@ -20,8 +20,8 @@
 	"ExtensionMessagesFiles": {
 		"SimpleTooltipMagic": "SimpleTooltip.i18n.magic.php"
 	},
-	"AutoloadClasses": {
-		"SimpleTooltipHooks": "src/SimpleTooltipHooks.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\SimpleTooltip\\": "src/"
 	},
 	"ResourceModules": {
 		"ext.SimpleTooltip": {
@@ -49,8 +49,8 @@
 		}
 	},
 	"Hooks": {
-		"BeforePageDisplay": "SimpleTooltipHooks::onBeforePageDisplay",
-		"ParserFirstCallInit": "SimpleTooltipHooks::onParserFirstCallInit"
+		"BeforePageDisplay": "MediaWiki\\Extension\\SimpleTooltip\\SimpleTooltipHooks::onBeforePageDisplay",
+		"ParserFirstCallInit": "MediaWiki\\Extension\\SimpleTooltip\\SimpleTooltipHooks::onParserFirstCallInit"
 	},
 	"manifest_version": 2
 }

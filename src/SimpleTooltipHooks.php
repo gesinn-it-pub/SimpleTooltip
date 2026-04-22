@@ -2,6 +2,13 @@
 
 declare( strict_types=1 );
 
+namespace MediaWiki\Extension\SimpleTooltip;
+
+use OutputPage;
+use Parser;
+use Sanitizer;
+use Skin;
+
 class SimpleTooltipHooks {
 	/**
 	 * Add libraries to resource loader
