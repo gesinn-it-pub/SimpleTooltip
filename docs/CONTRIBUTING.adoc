@@ -8,6 +8,7 @@
 // NEVER edit or regenerate CONTRIBUTING.adoc manually.
 // ============================================================
 :project_name: SimpleTooltip
+:project_type: mediawiki
 
 = Contributing
 
@@ -55,6 +56,194 @@ Create a new branch (replace _1234_ with your issue number):
 git checkout -b issue-1234
 ----
 
+*Coding Conventions — General*
+
+All source files regardless of language must follow these baseline rules.
+They are enforced by `make ci` (lint + phpcs + eslint).
+
+* Encoding: UTF-8 without BOM
+* Line endings: Unix-style LF (not CR+LF)
+* Indentation: tabs, not spaces
+* Maximum line length: 120 characters
+* No trailing whitespace
+* Newline at end of file
+
+*Coding Conventions — PHP*
+
+Tooling: https://github.com/wikimedia/mediawiki-tools-codesniffer[mediawiki-codesniffer] via PHPCS.
+Run locally: `make composer-phpcs` (or `make ci`).
+
+*File structure*
+
+* Every file starts with `declare( strict_types=1 );`
+* No closing `?>` tag
+* One class per file; filename matches class name (UpperCamelCase, e.g. `MyClass.php`)
+* New code belongs in `src/` following PSR-4; `includes/` is legacy and should be migrated incrementally
+
+*Namespaces and autoloading*
+
+* PSR-4 via Composer (`autoload.psr-4` in `composer.json`)
+* Top-level namespace = extension name (e.g. `MediaWiki\Extension\FooBar\...`)
+* Acronyms treated as single words: `HtmlId`, not `HTMLId`
+
+*Naming*
+
+[cols="1,1,1"]
+|===
+| Element | Convention | Example
+
+| Classes, interfaces, traits
+| UpperCamelCase
+| `PageFormParser`
+
+| Methods, variables
+| lowerCamelCase
+| `getFormContent()`
+
+| Constants
+| UPPER_CASE
+| `MAX_FORM_SIZE`
+
+| Global variables
+| `$wg` prefix
+| `$wgPageFormsSettings`
+|===
+
+*Type system*
+
+* Use native type declarations on all parameters, properties, and return types
+* PHPDoc only when native types are insufficient (e.g. `string[]`, `array<string, Foo>`)
+* Nullable parameters: `?Type`, not `Type $x = null`
+* Prefer `??` (null coalescing) and `??=` over ternary isset checks
+* Use arrow functions `fn( $x ) => $x * 2` for single-expression closures
+
+*Modern PHP features (target: PHP 8.1+)*
+
+* Constructor property promotion
+* `readonly` properties for immutable value objects
+* `enum` instead of class constant groups
+* `match()` instead of `switch` when returning a value
+
+*Code style*
+
+* 1TBS brace style — opening brace on same line, `else`/`elseif` on closing brace line
+* Always use braces, even for single-line blocks
+* Spaces inside parentheses: `getFoo( $bar )`, empty: `getBar()`
+* Spaces around binary operators: `$a = $b + $c`
+* Single quotes preferred; double quotes for string interpolation
+* `===` strict equality; `==` only when type coercion is intentional
+* No Yoda conditions: `$a === 'foo'`, not `'foo' === $a`
+* `elseif` not `else if`
+* `true`, `false`, `null` always lowercase
+
+*Architecture*
+
+* `private` by default; `protected` only when subclass access is needed
+* Dependency injection over direct instantiation — delegate `new Foo()` to factories
+* Single Responsibility: one class, one concern
+* No superglobals (`$_GET`, `$_POST`) — use `WebRequest` via `RequestContext`
+* No new global functions — use static utility classes (`Html`, `IP`) if needed
+* Order class members: `public` → `protected` → `private`
+
+*Coding Conventions — JavaScript*
+
+Tooling: https://eslint.org/[ESLint] with https://github.com/wikimedia/eslint-config-wikimedia[eslint-config-wikimedia].
+Run locally: `npm run lint:js` (or `make ci`).
+
+*ESLint configuration*
+
+Every repository must have a `.eslintrc.json` at root with `"root": true`:
+
+[source,json]
+----
+{
+  "root": true,
+  "extends": [
+    "wikimedia/client/es2016",
+    "wikimedia/jquery",
+    "wikimedia/mediawiki"
+  ],
+  "env": { "commonjs": true }
+}
+----
+
+*Module system*
+
+* CommonJS modules: `require()` for imports, `module.exports` for exports
+* Register modules with ResourceLoader; bundle name pattern: `ext.myExtension`
+* JS class files match the class name exactly (`TitleWidget.js` for `TitleWidget`)
+
+*Naming*
+
+* Variables and methods: lowerCamelCase
+* Constructors / classes: UpperCamelCase
+* jQuery objects: `$`-prefix (`$button`, not `button`)
+* Constants: `ALL_CAPS`
+* Acronyms as single words: `getHtmlApiSource`, not `getHTMLAPISource`
+
+*Code style*
+
+* Tabs for indentation; single quotes for string literals
+* `===` and `!==`; no Yoda conditions
+* Spaces inside parentheses: `if ( foo )`, `getFoo( bar )`
+* `const` and `let` — never `var` in new code
+* Arrow functions for callbacks
+
+*jQuery*
+
+* Prefer ES6/DOM equivalents over deprecated jQuery methods (`.each` → `forEach`, etc.)
+* Never search the full DOM with `$( '#id' )` or `$( '.selector' )`;
+  use hook-provided `$content` and call `.find()` on it
+* Prefer `$( '<div>' ).text( value )` over `$( '<div>text</div>' )` to avoid XSS
+
+*MediaWiki APIs*
+
+* Access configuration via `mw.config.get( 'wgFoo' )`, never direct globals
+* Expose public API via `module.exports` or within the `mw` namespace (e.g. `mw.echo.Foo`)
+* Use `mw.storage` / `mw.storage.session` for localStorage/sessionStorage
+* Storage keys: `mw`-prefix + camelCase/hyphens (e.g. `mwedit-state-foo`)
+
+*Coding Conventions — CSS / LESS*
+
+Tooling: https://stylelint.io/[stylelint] via `npm run lint:styles` (or `make ci`).
+ResourceLoader natively compiles `.less` files; prefer LESS over plain CSS.
+
+*Naming*
+
+* Classes and IDs: all-lowercase, hyphen-separated
+* Use an extension-specific prefix to avoid conflicts (e.g. `pf-`, `smw-`, `mw-`)
+* LESS mixin names: `mixin-` prefix + hyphen-case (e.g. `mixin-screen-reader-text`)
+
+*Whitespace and formatting*
+
+* One selector per line, one property per line
+* Opening brace on the same line as the last selector
+* Tab indentation for properties and nested rules
+* Semicolon after every declaration, including the last
+* Empty line between rule sets
+
+*Colors*
+
+* Lowercase hex shorthand preferred: `#fff`, `#252525`
+* `rgba()` when alpha transparency is needed; `transparent` keyword otherwise
+* No named color keywords (except `transparent`), no `rgb()`, `hsl()`, `hsla()`
+* Ensure color contrast meets https://www.w3.org/TR/WCAG20/[WCAG 2.0 AA]
+
+*LESS specifics*
+
+* CSS custom properties (design tokens) preferred over LESS variables for new code
+* `@import` only for mixins and variables (`variables.less`, `mixins.less`);
+  do not use `@import` for bundling conceptually related files
+* Omit `.less` extension in `@import` statements
+* Bundle related files via the `styles` array in `skin.json` / `extension.json`
+
+*Anti-patterns to avoid*
+
+* `!important` — avoid except when overriding upstream code that also uses it
+* `z-index` — use natural DOM stacking order where possible; document exceptions
+* Inline `style` attributes — always use stylesheet classes instead
+* `float` / `text-align: left` hardcoded — use `/* @noflip */` annotation when needed,
+  otherwise ResourceLoader's CSSJanus handles RTL automatically
 
 == Step 4: Test your changes
 
