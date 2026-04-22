@@ -56,6 +56,8 @@ Create a new branch (replace _1234_ with your issue number):
 git checkout -b issue-1234
 ----
 
+'''
+
 *Coding Conventions — General*
 
 All source files regardless of language must follow these baseline rules.
@@ -67,6 +69,8 @@ They are enforced by `make ci` (lint + phpcs + eslint).
 * Maximum line length: 120 characters
 * No trailing whitespace
 * Newline at end of file
+
+'''
 
 *Coding Conventions — PHP*
 
@@ -145,6 +149,8 @@ Run locally: `make composer-phpcs` (or `make ci`).
 * No new global functions — use static utility classes (`Html`, `IP`) if needed
 * Order class members: `public` → `protected` → `private`
 
+'''
+
 *Coding Conventions — JavaScript*
 
 Tooling: https://eslint.org/[ESLint] with https://github.com/wikimedia/eslint-config-wikimedia[eslint-config-wikimedia].
@@ -202,6 +208,8 @@ Every repository must have a `.eslintrc.json` at root with `"root": true`:
 * Expose public API via `module.exports` or within the `mw` namespace (e.g. `mw.echo.Foo`)
 * Use `mw.storage` / `mw.storage.session` for localStorage/sessionStorage
 * Storage keys: `mw`-prefix + camelCase/hyphens (e.g. `mwedit-state-foo`)
+
+'''
 
 *Coding Conventions — CSS / LESS*
 
