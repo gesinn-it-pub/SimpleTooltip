@@ -9,6 +9,7 @@
 // ============================================================
 :project_name: SimpleTooltip
 :project_type: mediawiki
+:phan:
 
 = Contributing
 
@@ -151,6 +152,45 @@ Run locally: `make composer-phpcs` (or `make ci`).
 
 '''
 
+*Static Analysis — Phan*
+
+Tooling: https://github.com/phan/phan[Phan] with https://github.com/wikimedia/mediawiki-phan-config[mediawiki-phan-config].
+Run locally: `make composer-phan` (or `make dev-test`).
+
+*Configuration*
+
+`.phan/config.php` inherits from `mediawiki-phan-config`:
+
+[source,php]
+----
+$cfg = require __DIR__ . '/../vendor/mediawiki/mediawiki-phan-config/src/config.php';
+
+$cfg['baseline_path'] = __DIR__ . '/baseline.php';
+
+$cfg['directory_list'] = array_merge(
+    $cfg['directory_list'],
+    ['src', 'includes', 'specials']
+);
+
+$cfg['exclude_analysis_directory_list'] = array_merge(
+    $cfg['exclude_analysis_directory_list'],
+    ['vendor/']
+);
+
+return $cfg;
+----
+
+*Baseline*
+
+* `.phan/baseline.php` is auto-generated — do not edit it manually
+* New code must not introduce Phan issues beyond the current baseline
+* When deliberately deferring a pre-existing issue, update the baseline: +
+  `composer phan -- --save-baseline=.phan/baseline.php`
+* When suppressing with `@suppress`, always add an explanatory comment
+
+
+'''
+
 *Coding Conventions — JavaScript*
 
 Tooling: https://eslint.org/[ESLint] with https://github.com/wikimedia/eslint-config-wikimedia[eslint-config-wikimedia].
@@ -200,6 +240,7 @@ Every repository must have a `.eslintrc.json` at root with `"root": true`:
 * Prefer ES6/DOM equivalents over deprecated jQuery methods (`.each` → `forEach`, etc.)
 * Never search the full DOM with `$( '#id' )` or `$( '.selector' )`;
   use hook-provided `$content` and call `.find()` on it
+  _(full-DOM queries match stale or foreign nodes, break hook-lifecycle isolation, and waste performance by traversing the entire document)_
 * Prefer `$( '<div>' ).text( value )` over `$( '<div>text</div>' )` to avoid XSS
 
 *MediaWiki APIs*
@@ -354,6 +395,15 @@ Before every commit, run the full CI suite to confirm nothing is broken:
 ----
 make ci
 ----
+For interactive use (volume-mounted extension, no container rebuild), use the faster pre-commit gate:
+
+[source,console]
+----
+make dev-test
+----
+
+`dev-test` runs: lint → PHPCS → Phan → PHPUnit — without destroying Docker volumes.
+Reserve `make ci` for the full pipeline verification.
 
 == Step 5: Commit your changes
 

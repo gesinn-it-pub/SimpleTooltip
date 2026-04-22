@@ -117,6 +117,46 @@ via PHPCS. Run locally: `make composer-phpcs` (or `make ci`).
 
 - Order class members: `public` → `protected` → `private`
 
+**Static Analysis — Phan**
+
+Tooling: [Phan](https://github.com/phan/phan) with
+[mediawiki-phan-config](https://github.com/wikimedia/mediawiki-phan-config).
+Run locally: `make composer-phan` (or `make dev-test`).
+
+**Configuration**
+
+`.phan/config.php` inherits from `mediawiki-phan-config`:
+
+``` php
+$cfg = require __DIR__ . '/../vendor/mediawiki/mediawiki-phan-config/src/config.php';
+
+$cfg['baseline_path'] = __DIR__ . '/baseline.php';
+
+$cfg['directory_list'] = array_merge(
+    $cfg['directory_list'],
+    ['src', 'includes', 'specials']
+);
+
+$cfg['exclude_analysis_directory_list'] = array_merge(
+    $cfg['exclude_analysis_directory_list'],
+    ['vendor/']
+);
+
+return $cfg;
+```
+
+**Baseline**
+
+- `.phan/baseline.php` is auto-generated — do not edit it manually
+
+- New code must not introduce Phan issues beyond the current baseline
+
+- When deliberately deferring a pre-existing issue, update the
+  baseline:  
+  `composer phan — --save-baseline=.phan/baseline.php`
+
+- When suppressing with `@suppress`, always add an explanatory comment
+
 **Coding Conventions — JavaScript**
 
 Tooling: [ESLint](https://eslint.org/) with
@@ -181,7 +221,9 @@ Every repository must have a `.eslintrc.json` at root with
   `forEach`, etc.)
 
 - Never search the full DOM with `$( '#id' )` or `$( '.selector' )`; use
-  hook-provided `$content` and call `.find()` on it
+  hook-provided `$content` and call `.find()` on it *(full-DOM queries
+  match stale or foreign nodes, break hook-lifecycle isolation, and
+  waste performance by traversing the entire document)*
 
 - Prefer `$( '<div>' ).text( value )` over `$( '<div>text</div>' )` to
   avoid XSS
@@ -328,6 +370,34 @@ make bash
 > composer phpunit -- --filter YourTestName
 ```
 
+**Phan — static analysis**
+
+Run Phan against the codebase:
+
+``` console
+make composer-phan
+```
+
+**Fixing issues**
+
+- Fix genuine type errors, undeclared-method, and undeclared-class
+  issues in new code
+
+- For issues in legacy code not touched by the current change, update
+  the baseline instead of adding `@suppress`:
+
+  ``` console
+  composer phan -- --save-baseline=.phan/baseline.php
+  ```
+
+- When `@suppress` is unavoidable, add an explanatory comment directly
+  above it
+
+**Baseline updates**
+
+`.phan/baseline.php` is auto-generated. After updating it, commit it
+together with the code change that necessitated the update.
+
 **Node QUnit tests**
 
 Run all JavaScript tests:
@@ -358,6 +428,16 @@ Before every commit, run the full CI suite to confirm nothing is broken:
 ``` console
 make ci
 ```
+
+For interactive use (volume-mounted extension, no container rebuild),
+use the faster pre-commit gate:
+
+``` console
+make dev-test
+```
+
+`dev-test` runs: lint → PHPCS → Phan → PHPUnit — without destroying
+Docker volumes. Reserve `make ci` for the full pipeline verification.
 
 # Commit Convention
 
