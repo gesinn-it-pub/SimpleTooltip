@@ -25,9 +25,9 @@ use PHPUnit\Framework\TestCase;
 class SimpleTooltipHooksTest extends TestCase {
 
 	/**
-	 * @covers SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
 	 */
-	public function testInlineTooltip() {
+	public function testInlineTooltip(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
@@ -44,7 +44,7 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
 	 */
 	public function testInlineTooltipEmptyTooltipTextReturnsEmptyArray(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
@@ -59,7 +59,7 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
 	 */
 	public function testInlineTooltipConvertsDoubleQuotesToSingleQuotes(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
@@ -76,7 +76,7 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
 	 */
 	public function testInlineTooltipEscapesHtmlInDisplayText(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
@@ -92,7 +92,7 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
 	 */
 	public function testInlineTooltipReturnsExpectedFlags(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
@@ -109,9 +109,9 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers SimpleTooltipHooks::infoTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
 	 */
-	public function testInfoTooltip() {
+	public function testInfoTooltip(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
@@ -123,7 +123,7 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers SimpleTooltipHooks::infoTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
 	 */
 	public function testInfoTooltipEmptyValueReturnsEmptyArray(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
@@ -135,7 +135,7 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers SimpleTooltipHooks::infoTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
 	 */
 	public function testInfoTooltipEscapesHtmlSpecialChars(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
@@ -147,9 +147,9 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers SimpleTooltipHooks::imgTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
 	 */
-	public function testImgTooltip() {
+	public function testImgTooltip(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
 						   ->disableOriginalConstructor()
 						   ->getMock();
@@ -162,7 +162,7 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers SimpleTooltipHooks::imgTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
 	 */
 	public function testImgTooltipEmptyTooltipTextReturnsEmptyArray(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
@@ -174,7 +174,7 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers SimpleTooltipHooks::imgTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
 	 */
 	public function testImgTooltipEscapesHtmlInSrc(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
