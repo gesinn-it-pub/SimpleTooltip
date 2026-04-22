@@ -64,5 +64,5 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage/php/coverage.xml,coverage/js/clover.xml
+          files: build/coverage/php/coverage.xml,build/coverage/js/clover.xml
         if: matrix.coverage == true
