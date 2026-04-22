@@ -11,51 +11,32 @@ For documentation see: https://www.mediawiki.org/wiki/Extension:SimpleTooltip
 
 == Versioning
 
-We use http://semver.org/[SemVer] for versioning. See the tags in this repository for  available versions.
+We use http://semver.org/[SemVer] for versioning. See the tags in this repository for available versions.
 
-== Contributing
-We welcome contributions from the community to help make {project_name} better! Whether you're fixing bugs, adding new features, improving documentation, or anything else, your efforts are valuable.
+:leveloffset: +1
 
-We try to follow the https://www.conventionalcommits.org/[Conventional Commits specification] for issues and commit messages to create good and meaningful change logs.
+= Contributing
 
-[NOTE]
-====
-The repository contains
-https://git-scm.com/book/en/v2/Git-Tools-Submodules[submodules]. Make
-sure to clone with `--recursive` option in Git or by checking the
-'`Recursive`' checkbox in TortoiseGit.
+We welcome contributions from the community to help make {project_name} better!
+Whether you're fixing bugs, adding new features, improving documentation, or anything else, your efforts are valuable.
 
-....
-> git clone --recursive <REPO>
-....
+== Step 1: Clone the Repository
 
-If not done when cloning, it can be done by
-
-....
-> git submodule init
-> git submodule update
-....
-====
-
-.Click to see detailed *Contributing Guidelines*
-[%collapsible]
-====
-*Step 1: Clone the Repository*
-
-Fork and clone our repo to your local machine:
+Fork and clone the repository to your local machine:
 
 [source,console]
 ----
 git clone https://github.com/username/projectname.git --recursive
 ----
 
-*Step 2: Ensure test container is running*
+== Step 2: Ensure the test container is running
 
-This repository supports https://github.com/gesinn-it-pub/docker-compose-ci[_"docker-compose-ci"_ based CI and testing for MediaWiki extensions].
+This repository supports https://github.com/gesinn-it-pub/docker-compose-ci[_docker-compose-ci_-based CI and testing for MediaWiki extensions].
 
-The _docker-compose-ci_ repository has already been integrated into the {project_name} repository as a Git submodule. It uses https://en.wikipedia.org/wiki/Make_(software)[_"Make"_] as main entry point and command line interface.
+The _docker-compose-ci_ repository is integrated as a Git submodule (`build/`).
+It uses https://en.wikipedia.org/wiki/Make_(software)[Make] as the main entry point.
 
-Ensure, you have `Make` and `Docker` installed:
+Ensure `Make` and `Docker` are installed:
 
 [source,console]
 ----
@@ -63,50 +44,178 @@ make --version
 docker --version
 ----
 
-Run lint, phpcs and tests:
+Run lint, phpcs, and tests:
 
 [source,console]
 ----
 make ci
 ----
 
-*Step 3: Start coding*
+== Step 3: Start coding
 
-Make sure there is an issue that describes your changes. Create a new branch and start working on your changes. In _issue-1234_ replace _1234_ with your issue number:
+Make sure there is an issue describing your changes.
+Create a new branch (replace _1234_ with your issue number):
 
 [source,console]
 ----
 git checkout -b issue-1234
 ----
 
-*Step 4: Test your changes*
 
-Ensure that your changes include adequate testing where applicable.
+== Step 4: Test your changes
 
-Run lint, phpcs and tests:
+Before making any code changes to fix a bug or implement a feature:
+
+. Check whether an existing test already covers the described behavior.
+. If not, write or adapt a test that reproduces the issue — it must fail first.
+. Only after a failing test exists, make the code changes.
+. Re-run the test to confirm it passes (green).
+
+*Test-first approach*
+
+All tests run inside a containerized MediaWiki environment managed via
+https://github.com/gesinn-it-pub/docker-compose-ci[docker-compose-ci] (the `build/` submodule).
+Never run tests directly against a local PHP or Node.js installation.
+
+Always run `make install` before executing tests to ensure that the latest file
+changes are copied into the container. Changes to source or test files on the
+host are *not* automatically reflected in a running container.
+
+[source,console]
+----
+make install
+----
+
+*PHPUnit tests*
+
+Run all PHPUnit tests:
+
+[source,console]
+----
+make install composer-phpunit
+----
+
+Run a single test class or method (filtered):
+
+[source,console]
+----
+make install composer-phpunit COMPOSER_PARAMS="-- --filter YourTestName"
+----
+
+Run a specific test suite:
+
+[source,console]
+----
+make install composer-phpunit COMPOSER_PARAMS="-- --testsuite your-suite-name"
+----
+
+For interactive use, bash into the running container:
+
+[source,console]
+----
+make bash
+> composer phpunit -- --filter YourTestName
+----
+
+*Node QUnit tests*
+
+Run all JavaScript tests:
+
+[source,console]
+----
+make install npm-test
+----
+
+There is no direct `make` target for filtering individual tests.
+Bash into the running container to run a specific test file or test case:
+
+[source,console]
+----
+make bash
+> npm run node-qunit -- tests/node-qunit/yourtest.test.js
+----
+
+Filter by test description:
+
+[source,console]
+----
+make bash
+> npx qunit --require ./tests/node-qunit/setup.js 'tests/node-qunit/**/*.test.js' --filter "your test description"
+----
+
+*Pre-commit validation gate*
+
+Before every commit, run the full CI suite to confirm nothing is broken:
 
 [source,console]
 ----
 make ci
 ----
 
-*Step 5: Commit your changes*
+== Step 5: Commit your changes
 
-Make sure your commits are well-documented. Try to follow the https://www.conventionalcommits.org/[Conventional Commits specification] to help us writing good and meaningful change logs.
+== Conventional Commits Policy
+
+Commit messages follow the https://www.conventionalcommits.org/[Conventional Commits specification].
+
+Commit format:
+
+`type(scope): short description`
+
+The scope is optional and should describe the affected subsystem, module, or dependency when useful.
+
+Examples:
+
+* feat(api): add autocomplete endpoint
+* fix(parser): handle empty token lists
+* docs(readme): explain input architecture
+* refactor(parser): simplify token parsing
+* deps(smw): bump from 5.1.0 to 5.2.0
+* ci(github): update workflow configuration
+* test(api): add autocomplete tests
+
+Recommended commit types:
+
+* `feat` — new functionality
+* `fix` — bug fixes
+* `deps` — dependency updates
+* `docs` — documentation changes
+* `refactor` — internal code changes without behavioral change
+* `test` — tests added or updated
+* `ci` — changes to continuous integration configuration
+* `chore` — repository maintenance tasks without impact on runtime behavior
+
+Dependency updates:
+
+* Use the `deps` type for dependency upgrades
+* The scope should identify the dependency being updated
+* Include the version change when applicable
+
+Example:
+
+* deps(smw): bump from 5.1.0 to 5.2.0
+
+Guidelines:
+
+* Use the imperative mood (e.g. "add feature", not "added feature")
+* Keep the subject line concise
+* Use the commit body to explain *why*, not only *what*
+* Scopes should be short, lowercase identifiers (e.g. `api`, `parser`, `smw`, `mediawiki`, `docker`)
+* Use `chore` only for repository maintenance tasks that do not affect runtime behavior, dependencies, CI configuration, or tests
 
 [source,console]
 ----
-git commit -m "Description of your changes"
+git commit -m "type(scope): description"
 ----
 
-*Step 6: Push!*
-Push your branch and open a pull request.
+== Step 6: Push and open a Pull Request
 
 [source,console]
 ----
-git push origin feature/your-feature-name
+git push origin issue-1234
 ----
-====
+
+:leveloffset!:
 
 == Attribution
 Uses the http://iamceege.github.io/tooltipster/[Tooltipster Library] and https://github.com/yusukekamiyamane/fugue-icons[Fugue Icons]
