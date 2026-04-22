@@ -157,7 +157,7 @@ class SimpleTooltipHooksTest extends TestCase {
 		$tooltip = SimpleTooltipHooks::imgTooltip( $parserMock, 'Image URL', 'Tooltip text' );
 
 		$expectedHtml = '<img class="simple-tooltip simple-tooltip-img" ' .
-						'data-simple-tooltip="Tooltip text" src="Image URL"></img>';
+						'data-simple-tooltip="Tooltip text" src="Image URL">';
 		$this->assertEquals( $expectedHtml, $tooltip[0] );
 	}
 

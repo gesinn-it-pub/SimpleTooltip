@@ -116,7 +116,7 @@ class SimpleTooltipHooks {
 		$html = '<img class="simple-tooltip simple-tooltip-img"';
 
 		$html .= ' data-simple-tooltip="' . htmlspecialchars( Sanitizer::removeSomeTags( $title ) ) . '"';
-		$html .= ' src="' . $imgUrl . '"></img>';
+		$html .= ' src="' . $imgUrl . '">';
 
 		return [
 			$html,
