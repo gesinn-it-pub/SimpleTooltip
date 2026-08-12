@@ -32,7 +32,10 @@
 			"Composer\\Config::disableProcessTimeout",
 			"bash -c 'cd ${MW_INSTALL_PATH:-../..} && { [ -f tests/phpunit/generatePHPUnitConfig.php ] && { php tests/phpunit/generatePHPUnitConfig.php >/dev/null 2>&1 || true; [ -f phpunit.xml ] || printf \"%s\" \"<phpunit><!-- generatePHPUnitConfig --></phpunit>\" > phpunit.xml; } || true; } && MEDIAWIKI_HAS_INTEGRATION_TESTS=1 vendor/bin/phpunit -c extensions/SimpleTooltip/phpunit.xml.dist --bootstrap tests/phpunit/bootstrap.php --testdox'"
 		],
-		"phpunit-coverage": "@phpunit --coverage-text --coverage-html extensions/SimpleTooltip/coverage/php --coverage-clover extensions/SimpleTooltip/coverage/php/coverage.xml",
+		"phpunit-coverage": [
+			"Composer\\Config::disableProcessTimeout",
+			"bash -c 'cd ${MW_INSTALL_PATH:-../..} && { [ -f tests/phpunit/generatePHPUnitConfig.php ] && { php tests/phpunit/generatePHPUnitConfig.php >/dev/null 2>&1 || true; [ -f phpunit.xml ] || printf \"%s\" \"<phpunit><!-- generatePHPUnitConfig --></phpunit>\" > phpunit.xml; } || true; } && MEDIAWIKI_HAS_INTEGRATION_TESTS=1 vendor/bin/phpunit -c extensions/SimpleTooltip/phpunit.xml.dist --bootstrap tests/phpunit/bootstrap.php --testdox --coverage-text --coverage-html extensions/SimpleTooltip/coverage/php --coverage-clover extensions/SimpleTooltip/coverage/php/coverage.xml'"
+		],
 		"minus-x": "minus-x check ."
 	},
 	"autoload": {

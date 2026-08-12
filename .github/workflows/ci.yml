@@ -21,6 +21,7 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - mediawiki_version: '1.39'
@@ -51,24 +52,25 @@ jobs:
       
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
-                   
+
       - name: Update submodules
         run: git submodule update --init --remote
-  
+
       - name: Run tests
         run: make ci
         if: matrix.coverage == false
 
       - name: Run tests with coverage
-        run: make ci-coverage
+        run: mkdir -p build/coverage && make ci-coverage
         if: matrix.coverage == true
 
       - name: Upload code coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          slug: gesinn-it-pub/SimpleTooltip
           files: build/coverage/php/coverage.xml,build/coverage/js/clover.xml
         if: matrix.coverage == true
