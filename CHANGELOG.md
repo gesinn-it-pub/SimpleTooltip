@@ -1,50 +1,34 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](https://semver.org/) and
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-27
+
+Tooltips now accept wikitext everywhere, the output of tooltip text is more robust, and the extension only loads its module on pages that use a tooltip. Several changes affect existing output, see Breaking Changes.
+
+### Breaking Changes
+- `#tip-img` takes the name of a file on the wiki (with or without `File:`) instead of a path or URL. External images are accepted only as http(s) URLs and only if `$wgAllowExternalImages` or `$wgAllowExternalImagesFrom` allows them, otherwise an error message is shown [`7792c77`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/7792c77)
+- The tooltip content is a `<div class="simple-tooltip__content">` without an outer paragraph, and the hovered text of `#tip-text` is parsed as wikitext instead of being shown as plain text. Custom CSS or scripts that rely on the old markup may need an update [`97dbd31`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/97dbd31), [`7792c77`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/7792c77)
+- The module `ext.SimpleTooltip` is only loaded on pages that contain a tooltip, no longer on every page. Scripts that use `mw.libs.SimpleTooltip` on other pages must load the module themselves. With PageForms up to 2.4.0, tooltips in a form are not initialised after a preview, a diff or a failed save; this is fixed in PageForms after 2.4.0 [`944f97d`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/944f97d)
+
+### Added
+- Wikitext (formatting, links, templates) works in the tooltip text of `#tip-text`, `#tip-info` and `#tip-img` and in the hovered text of `#tip-text` [`7792c77`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/7792c77) ([#7](https://github.com/gesinn-it-pub/SimpleTooltip/issues/7))
+
 ### Changed
-
-- The tooltip content is wrapped in `<div class="simple-tooltip__content">` instead of a `<span>`, and a single
-  outer paragraph (`<p>`) is removed, which added margins inside the tooltip. Several paragraphs, lists and other
-  block content are kept inside the div. Custom CSS that targets `p` or `span` inside a tooltip may need an update.
-- The `ext.SimpleTooltip` module is no longer added to every page. The parser functions request it for the page
-  that uses them (`ParserOutput::addModules`), and the `BeforePageDisplay` hook is gone. Note for PageForms: up to
-  and including PageForms 2.4.0 the modules of a form's parser output are lost after a preview, a diff or a failed
-  save, so tooltips in a form are not initialised there; fixed in PageForms after 2.4.0 (6ecea2d2).
-- Wikitext is now supported everywhere: in the tooltip text of `#tip-text`, `#tip-info` and `#tip-img`, and
-  in the text that is hovered over in `#tip-text`.
-- `#tip-img` takes a file name of this wiki (with or without `File:`) instead of a path. External images
-  are accepted only as http(s) URLs and only if the wiki allows external images (`$wgAllowExternalImages`
-  and `$wgAllowExternalImagesFrom`); otherwise an error message is shown. Images get an empty `alt`.
-- `"` in tooltip text is no longer replaced by `'`; the attribute is escaped properly instead.
-
-### Documentation
-
-- Links to Tooltipster point to its current home, `calebjacob/tooltipster` and `calebjacob.github.io/tooltipster/` (the
-  project moved and the old project page is gone).
-- `lib/README.md` documents the bundled Tooltipster 3.3.0 (source, license, unmodified, no upstream maintenance) and
-  the README links to its GitHub repository.
-
-### Dependencies
-
-- Development tools: mediawiki-codesniffer 43.0.0 to 51.0.2, mediawiki-phan-config 0.14.0 to 0.20.0 (Phan 6),
-  minus-x 1.1.3 to 2.0.1. They need PHP 8.2, so the MediaWiki 1.39 CI leg runs on PHP 8.2.
-
-### Removed
-
-- The unused legacy i18n shim `SimpleTooltip.i18n.php` (it registered a function that did not exist), the
-  obsolete `targets` ResourceLoader setting and the unused `SimpleTooltipSubmitText` setting.
+- Quotation marks in tooltip text are no longer replaced by apostrophes [`7792c77`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/7792c77)
+- Remove the unused setting `SimpleTooltipSubmitText` [`4cb1fe6`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/4cb1fe6)
+- Document the bundled Tooltipster 3.3.0 and link to its new home [`b57dbd0`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/b57dbd0), [`633bfb3`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/633bfb3) ([#15](https://github.com/gesinn-it-pub/SimpleTooltip/pull/15))
+- Update the development tools; running the checks needs PHP 8.2 or newer [`898489d`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/898489d)
 
 ### Fixed
+- Make the output of tooltip text more robust: text that was already escaped is no longer converted to markup in the browser, and tooltip content is stripped of scripts and event handlers. Updating from 2.0.0 and 2.0.1 is recommended [`17e5229`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/17e5229)
+- Show tooltips in content that is added later, such as a live preview, and do not initialise a tooltip twice [`d925a9a`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/d925a9a)
+- Fix a PHP warning when `#tip-text` or `#tip-img` has no tooltip text, and show the tooltip text `0` [`5bf9277`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/5bf9277)
+- Work on MediaWiki 1.46 [`173ec4d`](https://github.com/gesinn-it-pub/SimpleTooltip/commit/173ec4d)
 
-- Compatibility with MediaWiki 1.46, which no longer provides the global `Html` class (the class is now
-  imported from `MediaWiki\Html`, with a fallback for MediaWiki 1.39).
-- `{{#tip-text: a}}` and `{{#tip-img: url}}` without a tooltip text no longer raise a PHP warning, and the
-  tooltip text `0` is no longer treated as empty.
-- Security: tooltip text was HTML-decoded a second time in the browser, so escaped markup (for example
-  `&lt;img onerror=...&gt;` or `<nowiki>`-wrapped HTML) was turned into live elements. The extra decoding
-  step is gone and the tooltip HTML is additionally stripped of scripts, event handlers and script URLs.
-- Tooltips are now initialised through the `wikipage.content` hook instead of a search of the whole document,
-  so they also work in content that is added later (live preview, AJAX). Elements that already have a tooltip
-  are skipped.
-- `mw.libs.SimpleTooltip.defaultOptions` and caller-supplied options are no longer modified by `trigger()`.
+[Unreleased]: https://github.com/gesinn-it-pub/SimpleTooltip/compare/3.0.0...HEAD
+[3.0.0]: https://github.com/gesinn-it-pub/SimpleTooltip/compare/2.0.1...3.0.0
