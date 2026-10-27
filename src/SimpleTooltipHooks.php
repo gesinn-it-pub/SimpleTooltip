@@ -45,11 +45,8 @@ class SimpleTooltipHooks {
 	 * @param string $value
 	 * @return array
 	 */
-	public static function inlineTooltip( Parser $parser, string $value ): array {
-		$args = array_slice( func_get_args(), 2 );
-		$title = $args[0];
-
-		if ( !$title ) {
+	public static function inlineTooltip( Parser $parser, string $value, string $title = '' ): array {
+		if ( trim( $title ) === '' ) {
 			return [];
 		}
 
@@ -80,7 +77,7 @@ class SimpleTooltipHooks {
 	 * @return array
 	 */
 	public static function infoTooltip( Parser $parser, string $value ): array {
-		if ( !$value ) {
+		if ( trim( $value ) === '' ) {
 			return [];
 		}
 
@@ -103,11 +100,8 @@ class SimpleTooltipHooks {
 	 * @param string $value
 	 * @return array
 	 */
-	public static function imgTooltip( Parser $parser, string $value ): array {
-		$args = array_slice( func_get_args(), 2 );
-		$title = $args[0];
-
-		if ( !$title ) {
+	public static function imgTooltip( Parser $parser, string $value, string $title = '' ): array {
+		if ( trim( $title ) === '' ) {
 			return [];
 		}
 

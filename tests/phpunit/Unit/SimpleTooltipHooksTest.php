@@ -184,4 +184,34 @@ class SimpleTooltipHooksTest extends TestCase {
 		$result = SimpleTooltipHooks::imgTooltip( $parserMock, '<script>alert(1)</script>', 'Tooltip text' );
 		$this->assertStringContainsString( 'src="&lt;script&gt;alert(1)&lt;/script&gt;"', $result[0] );
 	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
+	 */
+	public function testMissingTooltipArgumentReturnsEmptyArrayWithoutWarning(): void {
+		$parserMock = $this->getMockBuilder( Parser::class )
+							->disableOriginalConstructor()
+							->getMock();
+
+		$this->assertSame( [], SimpleTooltipHooks::inlineTooltip( $parserMock, 'Display text' ) );
+		$this->assertSame( [], SimpleTooltipHooks::imgTooltip( $parserMock, 'Image.png' ) );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
+	 */
+	public function testZeroIsValidTooltipText(): void {
+		$parserMock = $this->getMockBuilder( Parser::class )
+							->disableOriginalConstructor()
+							->getMock();
+		$parserMock->method( 'recursiveTagParseFully' )->willReturnArgument( 0 );
+
+		$inline = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Text', '0' );
+		$this->assertStringContainsString( 'data-simple-tooltip="0"', $inline[0] );
+
+		$info = SimpleTooltipHooks::infoTooltip( $parserMock, '0' );
+		$this->assertStringContainsString( 'data-simple-tooltip="0"', $info[0] );
+	}
 }
