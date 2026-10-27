@@ -28,7 +28,13 @@ class ParserFunctionsTest extends MediaWikiIntegrationTestCase {
 		$parser = MediaWikiServices::getInstance()->getParserFactory()->create();
 		$options = ParserOptions::newFromAnon();
 		$title = Title::makeTitle( NS_MAIN, 'SimpleTooltipTest' );
-		return $parser->parse( $wikitext, $title, $options )->getText( [ 'unwrap' => true ] );
+		$output = $parser->parse( $wikitext, $title, $options );
+
+		if ( version_compare( MW_VERSION, '1.42', '>=' ) ) {
+			return $output->getRawText();
+		}
+		// MW < 1.42: getRawText() did not exist; getText() was the only option (remove with MW 1.39 support)
+		return $output->getText( [ 'unwrap' => true ] );
 	}
 
 	/**

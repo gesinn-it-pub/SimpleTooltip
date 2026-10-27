@@ -28,6 +28,8 @@
 
 ### Fixed
 
+- Compatibility with MediaWiki 1.46, which no longer provides the global `Html` class (the class is now
+  imported from `MediaWiki\Html`, with a fallback for MediaWiki 1.39).
 - `{{#tip-text: a}}` and `{{#tip-img: url}}` without a tooltip text no longer raise a PHP warning, and the
   tooltip text `0` is no longer treated as empty.
 - Security: tooltip text was HTML-decoded a second time in the browser, so escaped markup (for example
