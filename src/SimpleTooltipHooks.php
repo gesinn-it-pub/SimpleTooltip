@@ -10,12 +10,14 @@ use OutputPage;
 use Parser;
 use Skin;
 
+// @codeCoverageIgnoreStart
 if ( !class_exists( Html::class ) ) {
 	// MW < 1.40: Html only exists as a global class; the global alias is gone in MW 1.46.
 	// Remove this block when support for MW 1.39 is dropped.
 	// @phan-suppress-next-line PhanUndeclaredClassAliasOriginal
 	class_alias( \Html::class, Html::class );
 }
+// @codeCoverageIgnoreEnd
 
 class SimpleTooltipHooks {
 	/**

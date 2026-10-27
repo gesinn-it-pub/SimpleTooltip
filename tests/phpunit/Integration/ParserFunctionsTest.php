@@ -21,6 +21,7 @@ use ParserOptions;
  *
  * @group SimpleTooltip
  * @group Database
+ * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks
  */
 class ParserFunctionsTest extends MediaWikiIntegrationTestCase {
 
@@ -115,5 +116,57 @@ class ParserFunctionsTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertStringNotContainsString( '<img', $html );
 		$this->assertStringContainsString( 'simple-tooltip-error', $html );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
+	 */
+	public function testImgTooltipUsesTheUrlOfALocalFile(): void {
+		// The class moved to MediaWiki\FileRepo in MW 1.43 and MW 1.46 drops the global name
+		$fileClass = class_exists( 'MediaWiki\\FileRepo\\File\\File' ) ? 'MediaWiki\\FileRepo\\File\\File' : 'File';
+		$repoClass = class_exists( 'MediaWiki\\FileRepo\\RepoGroup' ) ? 'MediaWiki\\FileRepo\\RepoGroup' : 'RepoGroup';
+
+		$file = $this->createMock( $fileClass );
+		$file->method( 'exists' )->willReturn( true );
+		$file->method( 'getUrl' )->willReturn( '/images/a/ab/Tip_icon.png' );
+		// The parser compares the title of the file with the requested one
+		$file->method( 'getTitle' )->willReturn( Title::makeTitle( NS_FILE, 'Tip_icon.png' ) );
+		$repoGroup = $this->createMock( $repoClass );
+		$repoGroup->method( 'findFile' )->willReturn( $file );
+		$this->setService( 'RepoGroup', $repoGroup );
+
+		foreach ( [ 'Tip icon.png', 'File:Tip icon.png' ] as $name ) {
+			$html = $this->parse( '{{#tip-img: ' . $name . ' | Tip}}' );
+
+			$this->assertStringContainsString( 'src="/images/a/ab/Tip_icon.png"', $html, $name );
+			$this->assertStringNotContainsString( 'simple-tooltip-error', $html, $name );
+		}
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
+	 */
+	public function testImgTooltipRefusesAnInvalidFileName(): void {
+		$html = $this->parse( '{{#tip-img: Bad[name | Tip}}' );
+
+		$this->assertStringNotContainsString( '<img', $html );
+		$this->assertStringContainsString( 'simple-tooltip-error', $html );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
+	 */
+	public function testImgTooltipAllowsOnlyUrlsFromTheExternalImageWhitelist(): void {
+		$this->overrideConfigValues( [
+			'AllowExternalImages' => false,
+			'AllowExternalImagesFrom' => [ 'https://cdn.example.org/' ],
+		] );
+
+		$allowed = $this->parse( '{{#tip-img: https://cdn.example.org/a.png | Tip}}' );
+		$this->assertStringContainsString( 'src="https://cdn.example.org/a.png"', $allowed );
+
+		$other = $this->parse( '{{#tip-img: https://evil.example.com/a.png | Tip}}' );
+		$this->assertStringNotContainsString( '<img', $other );
+		$this->assertStringContainsString( 'simple-tooltip-error', $other );
 	}
 }

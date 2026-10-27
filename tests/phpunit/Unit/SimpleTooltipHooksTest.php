@@ -15,13 +15,16 @@ declare( strict_types=1 );
 namespace Tests\Unit;
 
 use MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks;
+use OutputPage;
 use Parser;
 use ParserOptions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Skin;
 
 /**
  * @group SimpleTooltip
+ * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks
  */
 class SimpleTooltipHooksTest extends TestCase {
 
@@ -268,5 +271,40 @@ class SimpleTooltipHooksTest extends TestCase {
 
 		$this->assertStringContainsString( 'src="https://example.com/a.png&quot; onerror=&quot;x"', $result[0] );
 		$this->assertStringNotContainsString( '" onerror="', $result[0] );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::onBeforePageDisplay
+	 */
+	public function testBeforePageDisplayAddsTheModule(): void {
+		$out = $this->getMockBuilder( OutputPage::class )->disableOriginalConstructor()->getMock();
+		$skin = $this->getMockBuilder( Skin::class )->disableOriginalConstructor()->getMock();
+		$out->expects( $this->once() )->method( 'addModules' )->with( 'ext.SimpleTooltip' );
+
+		SimpleTooltipHooks::onBeforePageDisplay( $out, $skin );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::onParserFirstCallInit
+	 */
+	public function testParserFirstCallInitRegistersAllParserFunctions(): void {
+		$registered = [];
+		$parserMock = $this->getMockBuilder( Parser::class )->disableOriginalConstructor()->getMock();
+		$parserMock->expects( $this->exactly( 6 ) )
+			->method( 'setFunctionHook' )
+			->willReturnCallback( static function ( $name, $callback ) use ( &$registered ) {
+				$registered[$name] = $callback[1];
+			} );
+
+		SimpleTooltipHooks::onParserFirstCallInit( $parserMock );
+
+		$this->assertSame( [
+			'simple-tooltip' => 'inlineTooltip',
+			'tip-text' => 'inlineTooltip',
+			'simple-tooltip-info' => 'infoTooltip',
+			'tip-info' => 'infoTooltip',
+			'simple-tooltip-img' => 'imgTooltip',
+			'tip-img' => 'imgTooltip',
+		], $registered );
 	}
 }

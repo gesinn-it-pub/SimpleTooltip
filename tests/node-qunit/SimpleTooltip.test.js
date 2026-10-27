@@ -201,4 +201,19 @@ QUnit.module( 'SimpleTooltip', ( hooks ) => {
 		assert.strictEqual( calls, 1, 'tooltipster called for the cloned element' );
 	} );
 
+	QUnit.test( 'trigger without a context searches the whole document', ( assert ) => {
+		const $container = createContainer( 'global' );
+		jQuery( document.body ).append( $container );
+
+		const initialised = [];
+		jQuery.fn.tooltipster = function () {
+			initialised.push( this.attr( 'data-simple-tooltip' ) );
+			return this;
+		};
+		mw.libs.SimpleTooltip.trigger( false, false );
+
+		assert.true( initialised.includes( 'global' ), 'tooltip in the document is initialised' );
+		$container.remove();
+	} );
+
 } );
