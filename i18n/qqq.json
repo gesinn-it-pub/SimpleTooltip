@@ -5,5 +5,6 @@
 			"Kghbln"
 		]
 	},
-	"simpletooltip-desc": "{{desc|name=SimpleTooltip|url=https://www.mediawiki.org/wiki/Extension:SimpleTooltip}}"
+	"simpletooltip-desc": "{{desc|name=SimpleTooltip|url=https://www.mediawiki.org/wiki/Extension:SimpleTooltip}}",
+	"simpletooltip-img-invalid": "Error shown by the #tip-img parser function when the image is neither a file on this wiki nor an allowed external URL.\n\nParameters:\n* $1 - the image name or URL given by the editor"
 }

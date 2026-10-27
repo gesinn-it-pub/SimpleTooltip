@@ -16,6 +16,8 @@ namespace Tests\Unit;
 
 use MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks;
 use Parser;
+use ParserOptions;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,6 +25,37 @@ use PHPUnit\Framework\TestCase;
  *
  */
 class SimpleTooltipHooksTest extends TestCase {
+
+	/**
+	 * Parser whose parse methods return their input unchanged
+	 *
+	 * @return Parser&MockObject
+	 */
+	private function createParserMock(): Parser {
+		$parserMock = $this->getMockBuilder( Parser::class )
+							->disableOriginalConstructor()
+							->getMock();
+		$parserMock->method( 'recursiveTagParse' )->willReturnArgument( 0 );
+		$parserMock->method( 'recursiveTagParseFully' )->willReturnArgument( 0 );
+		return $parserMock;
+	}
+
+	/**
+	 * @param bool $allowExternal
+	 * @param string[] $allowedFrom
+	 * @return Parser&MockObject
+	 */
+	private function createParserMockWithExternalImages( bool $allowExternal, array $allowedFrom = [] ): Parser {
+		$options = $this->getMockBuilder( ParserOptions::class )
+							->disableOriginalConstructor()
+							->getMock();
+		$options->method( 'getAllowExternalImages' )->willReturn( $allowExternal );
+		$options->method( 'getAllowExternalImagesFrom' )->willReturn( $allowedFrom );
+
+		$parserMock = $this->createParserMock();
+		$parserMock->method( 'getOptions' )->willReturn( $options );
+		return $parserMock;
+	}
 
 	/**
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
@@ -34,7 +67,9 @@ class SimpleTooltipHooksTest extends TestCase {
 
 		$parserMock->expects( $this->once() )
 					->method( 'recursiveTagParseFully' )
+					->with( 'Tooltip text' )
 					->willReturn( 'Tooltip content' );
+		$parserMock->method( 'recursiveTagParse' )->willReturnArgument( 0 );
 
 		$tooltip = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Inline text', 'Tooltip text' );
 
@@ -47,12 +82,8 @@ class SimpleTooltipHooksTest extends TestCase {
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
 	 */
 	public function testInlineTooltipEmptyTooltipTextReturnsEmptyArray(): void {
-		$parserMock = $this->getMockBuilder( Parser::class )
-							->disableOriginalConstructor()
-							->getMock();
-
-		$parserMock->expects( $this->never() )
-					->method( 'recursiveTagParseFully' );
+		$parserMock = $this->createParserMock();
+		$parserMock->expects( $this->never() )->method( 'recursiveTagParseFully' );
 
 		$result = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Display text', '' );
 		$this->assertSame( [], $result );
@@ -61,60 +92,82 @@ class SimpleTooltipHooksTest extends TestCase {
 	/**
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
 	 */
-	public function testInlineTooltipConvertsDoubleQuotesToSingleQuotes(): void {
-		$parserMock = $this->getMockBuilder( Parser::class )
-							->disableOriginalConstructor()
-							->getMock();
-
-		$parserMock->expects( $this->once() )
-					->method( 'recursiveTagParseFully' )
-					->willReturn( 'Say "hello"' );
+	public function testInlineTooltipKeepsQuotesAndEscapesThemInTheAttribute(): void {
+		$parserMock = $this->createParserMock();
 
 		$result = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Display text', 'Say "hello"' );
-		// Double quotes are converted to single quotes, which htmlspecialchars then encodes as &#039;
-		$this->assertStringContainsString( 'data-simple-tooltip="Say &#039;hello&#039;"', $result[0] );
+		$this->assertStringContainsString( 'data-simple-tooltip="Say &quot;hello&quot;"', $result[0] );
+		$this->assertStringNotContainsString( 'data-simple-tooltip="Say "', $result[0] );
 	}
 
 	/**
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
 	 */
-	public function testInlineTooltipEscapesHtmlInDisplayText(): void {
+	public function testInlineTooltipDisplayTextIsParsedAsWikitext(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
-
 		$parserMock->expects( $this->once() )
-					->method( 'recursiveTagParseFully' )
-					->willReturn( 'Tooltip text' );
+					->method( 'recursiveTagParse' )
+					->with( "'''Bold''' text" )
+					->willReturn( '<b>Bold</b> text' );
+		$parserMock->method( 'recursiveTagParseFully' )->willReturn( 'Tip' );
 
-		$result = SimpleTooltipHooks::inlineTooltip( $parserMock, '<b>Bold text</b>', 'Tooltip text' );
-		$this->assertStringContainsString( '&lt;b&gt;Bold text&lt;/b&gt;', $result[0] );
+		$result = SimpleTooltipHooks::inlineTooltip( $parserMock, "'''Bold''' text", 'Tip' );
+		$this->assertStringContainsString( '><b>Bold</b> text</span>', $result[0] );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
+	 */
+	public function testInlineTooltipEscapesMarkupInTooltipText(): void {
+		$parserMock = $this->createParserMock();
+
+		$result = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Text', '<b>x</b>' );
+		$this->assertStringContainsString( 'data-simple-tooltip="&lt;b&gt;x&lt;/b&gt;"', $result[0] );
+		$this->assertStringNotContainsString( 'data-simple-tooltip="<b>', $result[0] );
 	}
 
 	/**
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
 	 */
 	public function testInlineTooltipReturnsExpectedFlags(): void {
-		$parserMock = $this->getMockBuilder( Parser::class )
-							->disableOriginalConstructor()
-							->getMock();
-
-		$parserMock->method( 'recursiveTagParseFully' )
-					->willReturn( 'Tooltip' );
-
-		$result = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Text', 'Tooltip' );
+		$result = SimpleTooltipHooks::inlineTooltip( $this->createParserMock(), 'Text', 'Tooltip' );
 		$this->assertTrue( $result['noparse'] );
 		$this->assertTrue( $result['isHTML'] );
 		$this->assertSame( 'nowiki', $result['markerType'] );
 	}
 
 	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
+	 */
+	public function testMissingTooltipArgumentReturnsEmptyArrayWithoutWarning(): void {
+		$parserMock = $this->createParserMock();
+
+		$this->assertSame( [], SimpleTooltipHooks::inlineTooltip( $parserMock, 'Display text' ) );
+		$this->assertSame( [], SimpleTooltipHooks::imgTooltip( $parserMock, 'Image.png' ) );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
+	 */
+	public function testZeroIsValidTooltipText(): void {
+		$parserMock = $this->createParserMock();
+
+		$inline = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Text', '0' );
+		$this->assertStringContainsString( 'data-simple-tooltip="0"', $inline[0] );
+
+		$info = SimpleTooltipHooks::infoTooltip( $parserMock, '0' );
+		$this->assertStringContainsString( 'data-simple-tooltip="0"', $info[0] );
+	}
+
+	/**
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
 	 */
 	public function testInfoTooltip(): void {
-		$parserMock = $this->getMockBuilder( Parser::class )
-							->disableOriginalConstructor()
-							->getMock();
+		$parserMock = $this->createParserMock();
 
 		$tooltip = SimpleTooltipHooks::infoTooltip( $parserMock, 'Tooltip text' );
 
@@ -126,92 +179,95 @@ class SimpleTooltipHooksTest extends TestCase {
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
 	 */
 	public function testInfoTooltipEmptyValueReturnsEmptyArray(): void {
+		$result = SimpleTooltipHooks::infoTooltip( $this->createParserMock(), '' );
+		$this->assertSame( [], $result );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
+	 */
+	public function testInfoTooltipIsParsedAsWikitext(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
+		$parserMock->expects( $this->once() )
+					->method( 'recursiveTagParseFully' )
+					->with( "''Hi''" )
+					->willReturn( '<i>Hi</i>' );
 
-		$result = SimpleTooltipHooks::infoTooltip( $parserMock, '' );
-		$this->assertSame( [], $result );
+		$result = SimpleTooltipHooks::infoTooltip( $parserMock, "''Hi''" );
+		$this->assertStringContainsString( 'data-simple-tooltip="&lt;i&gt;Hi&lt;/i&gt;"', $result[0] );
 	}
 
 	/**
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
 	 */
 	public function testInfoTooltipEscapesHtmlSpecialChars(): void {
-		$parserMock = $this->getMockBuilder( Parser::class )
-							->disableOriginalConstructor()
-							->getMock();
-
-		$result = SimpleTooltipHooks::infoTooltip( $parserMock, 'A &gt; B' );
+		$result = SimpleTooltipHooks::infoTooltip( $this->createParserMock(), 'A &gt; B' );
 		$this->assertStringContainsString( 'data-simple-tooltip="A &amp;gt; B"', $result[0] );
+		$this->assertStringNotContainsString( 'data-simple-tooltip="A &gt;', $result[0] );
 	}
 
 	/**
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
 	 */
-	public function testImgTooltip(): void {
-		$parserMock = $this->getMockBuilder( Parser::class )
-						   ->disableOriginalConstructor()
-						   ->getMock();
+	public function testImgTooltipWithAllowedExternalUrl(): void {
+		$parserMock = $this->createParserMockWithExternalImages( true );
 
-		$tooltip = SimpleTooltipHooks::imgTooltip( $parserMock, 'Image URL', 'Tooltip text' );
+		$tooltip = SimpleTooltipHooks::imgTooltip( $parserMock, 'https://example.com/a.png', 'Tooltip text' );
 
-		$expectedHtml = '<img class="simple-tooltip simple-tooltip-img" ' .
-						'data-simple-tooltip="Tooltip text" src="Image URL">';
-		$this->assertEquals( $expectedHtml, $tooltip[0] );
+		$this->assertStringContainsString( 'class="simple-tooltip simple-tooltip-img"', $tooltip[0] );
+		$this->assertStringContainsString( 'data-simple-tooltip="Tooltip text"', $tooltip[0] );
+		$this->assertStringContainsString( 'src="https://example.com/a.png"', $tooltip[0] );
+		$this->assertTrue( $tooltip['isHTML'] );
 	}
 
 	/**
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
 	 */
 	public function testImgTooltipEmptyTooltipTextReturnsEmptyArray(): void {
-		$parserMock = $this->getMockBuilder( Parser::class )
-							->disableOriginalConstructor()
-							->getMock();
-
-		$result = SimpleTooltipHooks::imgTooltip( $parserMock, 'http://example.com/image.png', '' );
+		$result = SimpleTooltipHooks::imgTooltip( $this->createParserMock(), 'http://example.com/image.png', '' );
 		$this->assertSame( [], $result );
 	}
 
 	/**
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
 	 */
-	public function testImgTooltipEscapesHtmlInSrc(): void {
+	public function testImgTooltipTooltipIsParsedAsWikitext(): void {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
+		$options = $this->getMockBuilder( ParserOptions::class )->disableOriginalConstructor()->getMock();
+		$options->method( 'getAllowExternalImages' )->willReturn( true );
+		$parserMock->method( 'getOptions' )->willReturn( $options );
+		$parserMock->expects( $this->once() )
+					->method( 'recursiveTagParseFully' )
+					->with( "'''Bold'''" )
+					->willReturn( '<b>Bold</b>' );
 
-		$result = SimpleTooltipHooks::imgTooltip( $parserMock, '<script>alert(1)</script>', 'Tooltip text' );
-		$this->assertStringContainsString( 'src="&lt;script&gt;alert(1)&lt;/script&gt;"', $result[0] );
+		$result = SimpleTooltipHooks::imgTooltip( $parserMock, 'https://example.com/a.png', "'''Bold'''" );
+		$this->assertStringContainsString( 'data-simple-tooltip="&lt;b&gt;Bold&lt;/b&gt;"', $result[0] );
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
 	 */
-	public function testMissingTooltipArgumentReturnsEmptyArrayWithoutWarning(): void {
-		$parserMock = $this->getMockBuilder( Parser::class )
-							->disableOriginalConstructor()
-							->getMock();
+	public function testImgTooltipAllowsUrlsFromTheExternalImageWhitelist(): void {
+		$parserMock = $this->createParserMockWithExternalImages( false, [ 'https://cdn.example.org/' ] );
 
-		$this->assertSame( [], SimpleTooltipHooks::inlineTooltip( $parserMock, 'Display text' ) );
-		$this->assertSame( [], SimpleTooltipHooks::imgTooltip( $parserMock, 'Image.png' ) );
+		$allowed = SimpleTooltipHooks::imgTooltip( $parserMock, 'https://cdn.example.org/a.png', 'Tip' );
+		$this->assertStringContainsString( 'src="https://cdn.example.org/a.png"', $allowed[0] );
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
-	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
 	 */
-	public function testZeroIsValidTooltipText(): void {
-		$parserMock = $this->getMockBuilder( Parser::class )
-							->disableOriginalConstructor()
-							->getMock();
-		$parserMock->method( 'recursiveTagParseFully' )->willReturnArgument( 0 );
+	public function testImgTooltipEscapesQuotesInUrl(): void {
+		$parserMock = $this->createParserMockWithExternalImages( true );
 
-		$inline = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Text', '0' );
-		$this->assertStringContainsString( 'data-simple-tooltip="0"', $inline[0] );
+		$result = SimpleTooltipHooks::imgTooltip( $parserMock, 'https://example.com/a.png" onerror="x', 'Tip' );
 
-		$info = SimpleTooltipHooks::infoTooltip( $parserMock, '0' );
-		$this->assertStringContainsString( 'data-simple-tooltip="0"', $info[0] );
+		$this->assertStringContainsString( 'src="https://example.com/a.png&quot; onerror=&quot;x"', $result[0] );
+		$this->assertStringNotContainsString( '" onerror="', $result[0] );
 	}
 }

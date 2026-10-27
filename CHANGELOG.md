@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Wikitext is now supported everywhere: in the tooltip text of `#tip-text`, `#tip-info` and `#tip-img`, and
+  in the text that is hovered over in `#tip-text`.
+- `#tip-img` takes a file name of this wiki (with or without `File:`) instead of a path. External images
+  are accepted only as http(s) URLs and only if the wiki allows external images (`$wgAllowExternalImages`
+  and `$wgAllowExternalImagesFrom`); otherwise an error message is shown. Images get an empty `alt`.
+- `"` in tooltip text is no longer replaced by `'`; the attribute is escaped properly instead.
+
 ### Fixed
 
 - `{{#tip-text: a}}` and `{{#tip-img: url}}` without a tooltip text no longer raise a PHP warning, and the
