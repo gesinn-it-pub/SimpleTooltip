@@ -86,4 +86,64 @@ QUnit.module( 'SimpleTooltip', ( hooks ) => {
 		document.body.removeChild( container );
 	} );
 
+	/**
+	 * Runs trigger() on one tooltip element and returns the options passed to tooltipster.
+	 *
+	 * @param {string} attrValue data-simple-tooltip value (already decoded by the browser)
+	 * @param {Object|boolean} customOptions
+	 * @return {Object}
+	 */
+	function triggerWith( attrValue, customOptions ) {
+		const container = document.createElement( 'div' );
+		const span = document.createElement( 'span' );
+		span.className = 'simple-tooltip';
+		span.setAttribute( 'data-simple-tooltip', attrValue );
+		container.appendChild( span );
+		document.body.appendChild( container );
+
+		let received = null;
+		jQuery.fn.tooltipster = function ( opts ) {
+			received = opts;
+			return this;
+		};
+		mw.libs.SimpleTooltip.trigger( jQuery( container ), customOptions );
+		document.body.removeChild( container );
+		return received;
+	}
+
+	QUnit.test( 'trigger does not modify defaultOptions', ( assert ) => {
+		triggerWith( 'Text', false );
+		assert.false( 'content' in mw.libs.SimpleTooltip.defaultOptions, 'defaultOptions has no content' );
+	} );
+
+	QUnit.test( 'trigger does not modify custom options passed by the caller', ( assert ) => {
+		const custom = { animation: 'grow' };
+		triggerWith( 'Text', custom );
+		assert.false( 'content' in custom, 'custom options object is untouched' );
+	} );
+
+	QUnit.test( 'trigger renders server-side HTML in the tooltip content', ( assert ) => {
+		const opts = triggerWith( 'a <b>bold</b> word', false );
+		assert.strictEqual( opts.content.find( 'b' ).length, 1, 'b element is present' );
+		assert.strictEqual( opts.content.text(), 'a bold word', 'text content is correct' );
+	} );
+
+	QUnit.test( 'trigger does not decode entities a second time', ( assert ) => {
+		// The browser has already decoded the attribute once; this is what <nowiki> yields.
+		const opts = triggerWith( '&lt;img src=x onerror=alert(1)&gt;', false );
+		assert.strictEqual( opts.content.find( 'img' ).length, 0, 'no img element is created' );
+		assert.strictEqual( opts.content.text(), '<img src=x onerror=alert(1)>', 'markup is shown as text' );
+	} );
+
+	QUnit.test( 'trigger strips scripts, event handlers and script URLs', ( assert ) => {
+		const link = '<a href="javascript:alert(3)" onclick="x()">l</a>';
+		const opts = triggerWith(
+			'<img src="x" onerror="alert(1)"><script>alert(2)</script>' + link,
+			false
+		);
+		assert.strictEqual( opts.content.find( 'script' ).length, 0, 'script removed' );
+		assert.strictEqual( opts.content.find( '[onerror], [onclick]' ).length, 0, 'event handlers removed' );
+		assert.strictEqual( opts.content.find( 'a' ).attr( 'href' ), undefined, 'script URL removed' );
+	} );
+
 } );
