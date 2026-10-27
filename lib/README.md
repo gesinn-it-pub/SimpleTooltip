@@ -3,7 +3,8 @@
 ## Tooltipster 3.3.0
 
 - Files: `jquery.tooltipster.js`, `tooltipster.css`
-- Source: <https://github.com/iamceege/tooltipster> (tag `3.3.0`, released 2014-11-08), MIT license
+- Source: <https://github.com/calebjacob/tooltipster> (tag `3.3.0`, released 2014-11-08), MIT license
+- The project moved from `iamceege` to `calebjacob`; the old project page is gone, the repository redirects.
 - Changes: none to the code. Line endings are LF, and trailing whitespace was removed from the CSS.
 - Status: the project is no longer maintained (last release 4.2.8 in 2020). No security fixes will be
   published upstream and none are known at the time of writing, so the extension does not rely on the

@@ -48,7 +48,7 @@ Breaking changes must always increment the MAJOR version.
 See link:docs/CONTRIBUTING.adoc[Contributing Guidelines].
 
 == Attribution
-Uses the https://github.com/iamceege/tooltipster[Tooltipster Library] (3.3.0, bundled in `lib/`, see `lib/README.md`) and https://github.com/yusukekamiyamane/fugue-icons[Fugue Icons]
+Uses the https://github.com/calebjacob/tooltipster[Tooltipster Library] (3.3.0, bundled in `lib/`, see `lib/README.md`) and https://github.com/yusukekamiyamane/fugue-icons[Fugue Icons]
 
 ---
 This extension is part of https://semantic.wiki/core[*semantic::core*] - Enterprise Class MediaWiki distribution.

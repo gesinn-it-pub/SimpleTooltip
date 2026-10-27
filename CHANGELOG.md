@@ -20,6 +20,8 @@
 
 ### Documentation
 
+- Links to Tooltipster point to its current home, `calebjacob/tooltipster` and `calebjacob.github.io/tooltipster/` (the
+  project moved and the old project page is gone).
 - `lib/README.md` documents the bundled Tooltipster 3.3.0 (source, license, unmodified, no upstream maintenance) and
   the README links to its GitHub repository.
 
