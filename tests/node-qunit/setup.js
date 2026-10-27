@@ -20,9 +20,18 @@ jQuery.fn.tooltipster = function () {
 global.jQuery = jQuery;
 global.$ = jQuery;
 
+// Records the handlers registered via mw.hook( name ).add( fn ) so that tests can fire them
+const hookHandlers = {};
+
 global.mw = {
 	libs: {},
-	hook: () => ( { add: () => {} } )
+	hook: ( name ) => ( {
+		add: ( fn ) => {
+			hookHandlers[ name ] = ( hookHandlers[ name ] || [] ).concat( fn );
+		}
+	} ),
+	fireHook: ( name, ...args ) => ( hookHandlers[ name ] || [] ).forEach( ( fn ) => fn( ...args ) ),
+	registeredHooks: () => Object.keys( hookHandlers )
 };
 
 require( '../../lib/SimpleTooltip.js' );

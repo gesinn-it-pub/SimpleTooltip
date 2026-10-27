@@ -146,4 +146,59 @@ QUnit.module( 'SimpleTooltip', ( hooks ) => {
 		assert.strictEqual( opts.content.find( 'a' ).attr( 'href' ), undefined, 'script URL removed' );
 	} );
 
+	/**
+	 * @param {string} text value of data-simple-tooltip
+	 * @param {string} [className]
+	 * @return {jQuery} a div that contains one tooltip element
+	 */
+	function createContainer( text, className = 'simple-tooltip' ) {
+		const container = document.createElement( 'div' );
+		const span = document.createElement( 'span' );
+		span.className = className;
+		span.setAttribute( 'data-simple-tooltip', text );
+		container.appendChild( span );
+		return jQuery( container );
+	}
+
+	QUnit.test( 'wikipage.content hook initialises only the tooltips inside its content', ( assert ) => {
+		assert.true( mw.registeredHooks().includes( 'wikipage.content' ), 'wikipage.content handler registered' );
+
+		const inside = createContainer( 'in' );
+		const outside = createContainer( 'out' );
+		jQuery( document.body ).append( inside, outside );
+
+		const initialised = [];
+		jQuery.fn.tooltipster = function () {
+			initialised.push( this.attr( 'data-simple-tooltip' ) );
+			return this;
+		};
+		mw.fireHook( 'wikipage.content', inside );
+
+		assert.deepEqual( initialised, [ 'in' ], 'only elements inside the hook content are initialised' );
+		inside.remove();
+		outside.remove();
+	} );
+
+	QUnit.test( 'already initialised tooltips are not initialised again', ( assert ) => {
+		const $container = createContainer( 'done', 'simple-tooltip tooltipstered' );
+		let calls = 0;
+		jQuery.fn.tooltipster = function () {
+			calls++;
+			return this;
+		};
+		mw.libs.SimpleTooltip.trigger( $container, false );
+		assert.strictEqual( calls, 0, 'tooltipster not called' );
+	} );
+
+	QUnit.test( 'pf.addTemplateInstance re-initialises the tooltips of a cloned instance', ( assert ) => {
+		const $instance = createContainer( 'clone', 'simple-tooltip tooltipstered' );
+		let calls = 0;
+		jQuery.fn.tooltipster = function () {
+			calls++;
+			return this;
+		};
+		mw.fireHook( 'pf.addTemplateInstance', $instance );
+		assert.strictEqual( calls, 1, 'tooltipster called for the cloned element' );
+	} );
+
 } );

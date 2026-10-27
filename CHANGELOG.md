@@ -23,4 +23,7 @@
 - Security: tooltip text was HTML-decoded a second time in the browser, so escaped markup (for example
   `&lt;img onerror=...&gt;` or `<nowiki>`-wrapped HTML) was turned into live elements. The extra decoding
   step is gone and the tooltip HTML is additionally stripped of scripts, event handlers and script URLs.
+- Tooltips are now initialised through the `wikipage.content` hook instead of a search of the whole document,
+  so they also work in content that is added later (live preview, AJAX). Elements that already have a tooltip
+  are skipped.
 - `mw.libs.SimpleTooltip.defaultOptions` and caller-supplied options are no longer modified by `trigger()`.
