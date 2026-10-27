@@ -40,7 +40,6 @@
 		"remoteExtPath": "SimpleTooltip"
 	},
 	"Hooks": {
-		"BeforePageDisplay": "MediaWiki\\Extension\\SimpleTooltip\\SimpleTooltipHooks::onBeforePageDisplay",
 		"ParserFirstCallInit": "MediaWiki\\Extension\\SimpleTooltip\\SimpleTooltipHooks::onParserFirstCallInit"
 	},
 	"manifest_version": 2

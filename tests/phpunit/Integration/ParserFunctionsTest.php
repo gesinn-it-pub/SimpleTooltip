@@ -25,11 +25,15 @@ use ParserOptions;
  */
 class ParserFunctionsTest extends MediaWikiIntegrationTestCase {
 
-	private function parse( string $wikitext ): string {
+	private function parseToOutput( string $wikitext ) {
 		$parser = MediaWikiServices::getInstance()->getParserFactory()->create();
 		$options = ParserOptions::newFromAnon();
 		$title = Title::makeTitle( NS_MAIN, 'SimpleTooltipTest' );
-		$output = $parser->parse( $wikitext, $title, $options );
+		return $parser->parse( $wikitext, $title, $options );
+	}
+
+	private function parse( string $wikitext ): string {
+		$output = $this->parseToOutput( $wikitext );
 
 		if ( version_compare( MW_VERSION, '1.42', '>=' ) ) {
 			return $output->getRawText();
@@ -168,5 +172,16 @@ class ParserFunctionsTest extends MediaWikiIntegrationTestCase {
 		$other = $this->parse( '{{#tip-img: https://evil.example.com/a.png | Tip}}' );
 		$this->assertStringNotContainsString( '<img', $other );
 		$this->assertStringContainsString( 'simple-tooltip-error', $other );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks
+	 */
+	public function testModuleIsRequestedOnlyByPagesThatUseAParserFunction(): void {
+		foreach ( [ '{{#tip-text: a | b}}', '{{#tip-info: b}}' ] as $wikitext ) {
+			$this->assertContains( 'ext.SimpleTooltip', $this->parseToOutput( $wikitext )->getModules(), $wikitext );
+		}
+
+		$this->assertNotContains( 'ext.SimpleTooltip', $this->parseToOutput( 'Plain text' )->getModules() );
 	}
 }

@@ -6,9 +6,7 @@ namespace MediaWiki\Extension\SimpleTooltip;
 
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
-use OutputPage;
 use Parser;
-use Skin;
 
 // @codeCoverageIgnoreStart
 if ( !class_exists( Html::class ) ) {
@@ -20,17 +18,6 @@ if ( !class_exists( Html::class ) ) {
 // @codeCoverageIgnoreEnd
 
 class SimpleTooltipHooks {
-	/**
-	 * Add libraries to resource loader
-	 *
-	 * @param OutputPage $out
-	 * @param Skin $skin
-	 */
-	public static function onBeforePageDisplay( OutputPage $out, Skin $skin ): void {
-		// Add as ResourceLoader Module
-		$out->addModules( 'ext.SimpleTooltip' );
-	}
-
 	/**
 	 * Register parser hooks
 	 *
@@ -75,7 +62,7 @@ class SimpleTooltipHooks {
 			$parser->recursiveTagParse( $value )
 		);
 
-		return self::htmlResult( $html );
+		return self::tooltipResult( $parser, $html );
 	}
 
 	/**
@@ -100,7 +87,7 @@ class SimpleTooltipHooks {
 			]
 		);
 
-		return self::htmlResult( $html );
+		return self::tooltipResult( $parser, $html );
 	}
 
 	/**
@@ -140,7 +127,7 @@ class SimpleTooltipHooks {
 			]
 		);
 
-		return self::htmlResult( $html );
+		return self::tooltipResult( $parser, $html );
 	}
 
 	/**
@@ -182,6 +169,19 @@ class SimpleTooltipHooks {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Result for a rendered tooltip; also loads the tooltip script and styles for this page only.
+	 *
+	 * @param Parser $parser
+	 * @param string $html Already safe HTML (built with Html or from parser output)
+	 * @return array
+	 */
+	private static function tooltipResult( Parser $parser, string $html ): array {
+		$parser->getOutput()->addModules( [ 'ext.SimpleTooltip' ] );
+
+		return self::htmlResult( $html );
 	}
 
 	/**

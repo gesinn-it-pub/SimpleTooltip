@@ -4,6 +4,10 @@
 
 ### Changed
 
+- The `ext.SimpleTooltip` module is no longer added to every page. The parser functions request it for the page
+  that uses them (`ParserOutput::addModules`), and the `BeforePageDisplay` hook is gone. Note for PageForms: up to
+  and including PageForms 2.4.0 the modules of a form's parser output are lost after a preview, a diff or a failed
+  save, so tooltips in a form are not initialised there; fixed in PageForms after 2.4.0 (6ecea2d2).
 - Wikitext is now supported everywhere: in the tooltip text of `#tip-text`, `#tip-info` and `#tip-img`, and
   in the text that is hovered over in `#tip-text`.
 - `#tip-img` takes a file name of this wiki (with or without `File:`) instead of a path. External images

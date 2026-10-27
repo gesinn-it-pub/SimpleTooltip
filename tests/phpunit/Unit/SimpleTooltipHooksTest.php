@@ -15,12 +15,10 @@ declare( strict_types=1 );
 namespace Tests\Unit;
 
 use MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks;
-use OutputPage;
 use Parser;
 use ParserOptions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Skin;
 
 /**
  * @group SimpleTooltip
@@ -31,30 +29,46 @@ class SimpleTooltipHooksTest extends TestCase {
 	/**
 	 * Parser whose parse methods return their input unchanged
 	 *
+	 * @param ParserOutput|null $output returned by getOutput(), a mock by default
 	 * @return Parser&MockObject
 	 */
-	private function createParserMock(): Parser {
+	private function createParserMock( $output = null ): Parser {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
+		$parserMock->method( 'getOutput' )->willReturn( $output ?? $this->createParserOutputMock() );
 		$parserMock->method( 'recursiveTagParse' )->willReturnArgument( 0 );
 		$parserMock->method( 'recursiveTagParseFully' )->willReturnArgument( 0 );
 		return $parserMock;
 	}
 
 	/**
+	 * @return ParserOutput&MockObject
+	 */
+	private function createParserOutputMock() {
+		// The class moved to MediaWiki\Parser in MW 1.42; remove the fallback with MW 1.39 support
+		$class = class_exists( 'MediaWiki\\Parser\\ParserOutput' ) ? 'MediaWiki\\Parser\\ParserOutput' : 'ParserOutput';
+		return $this->createMock( $class );
+	}
+
+	/**
 	 * @param bool $allowExternal
 	 * @param string[] $allowedFrom
+	 * @param ParserOutput|null $output returned by getOutput(), a mock by default
 	 * @return Parser&MockObject
 	 */
-	private function createParserMockWithExternalImages( bool $allowExternal, array $allowedFrom = [] ): Parser {
+	private function createParserMockWithExternalImages(
+		bool $allowExternal,
+		array $allowedFrom = [],
+		$output = null
+	): Parser {
 		$options = $this->getMockBuilder( ParserOptions::class )
 							->disableOriginalConstructor()
 							->getMock();
 		$options->method( 'getAllowExternalImages' )->willReturn( $allowExternal );
 		$options->method( 'getAllowExternalImagesFrom' )->willReturn( $allowedFrom );
 
-		$parserMock = $this->createParserMock();
+		$parserMock = $this->createParserMock( $output );
 		$parserMock->method( 'getOptions' )->willReturn( $options );
 		return $parserMock;
 	}
@@ -66,6 +80,7 @@ class SimpleTooltipHooksTest extends TestCase {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
+		$parserMock->method( 'getOutput' )->willReturn( $this->createParserOutputMock() );
 
 		$parserMock->expects( $this->once() )
 					->method( 'recursiveTagParseFully' )
@@ -109,6 +124,7 @@ class SimpleTooltipHooksTest extends TestCase {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
+		$parserMock->method( 'getOutput' )->willReturn( $this->createParserOutputMock() );
 		$parserMock->expects( $this->once() )
 					->method( 'recursiveTagParse' )
 					->with( "'''Bold''' text" )
@@ -192,6 +208,7 @@ class SimpleTooltipHooksTest extends TestCase {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
+		$parserMock->method( 'getOutput' )->willReturn( $this->createParserOutputMock() );
 		$parserMock->expects( $this->once() )
 					->method( 'recursiveTagParseFully' )
 					->with( "''Hi''" )
@@ -239,6 +256,7 @@ class SimpleTooltipHooksTest extends TestCase {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
+		$parserMock->method( 'getOutput' )->willReturn( $this->createParserOutputMock() );
 		$options = $this->getMockBuilder( ParserOptions::class )->disableOriginalConstructor()->getMock();
 		$options->method( 'getAllowExternalImages' )->willReturn( true );
 		$parserMock->method( 'getOptions' )->willReturn( $options );
@@ -274,17 +292,6 @@ class SimpleTooltipHooksTest extends TestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::onBeforePageDisplay
-	 */
-	public function testBeforePageDisplayAddsTheModule(): void {
-		$out = $this->getMockBuilder( OutputPage::class )->disableOriginalConstructor()->getMock();
-		$skin = $this->getMockBuilder( Skin::class )->disableOriginalConstructor()->getMock();
-		$out->expects( $this->once() )->method( 'addModules' )->with( 'ext.SimpleTooltip' );
-
-		SimpleTooltipHooks::onBeforePageDisplay( $out, $skin );
-	}
-
-	/**
 	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::onParserFirstCallInit
 	 */
 	public function testParserFirstCallInitRegistersAllParserFunctions(): void {
@@ -306,5 +313,49 @@ class SimpleTooltipHooksTest extends TestCase {
 			'simple-tooltip-img' => 'imgTooltip',
 			'tip-img' => 'imgTooltip',
 		], $registered );
+	}
+
+	/**
+	 * @param callable $call receives the parser and returns the result of a parser function
+	 * @param bool $expectModule
+	 */
+	private function assertModuleRequested( callable $call, bool $expectModule ): void {
+		$output = $this->createParserOutputMock();
+		if ( $expectModule ) {
+			$output->expects( $this->once() )->method( 'addModules' )->with( [ 'ext.SimpleTooltip' ] );
+		} else {
+			$output->expects( $this->never() )->method( 'addModules' );
+		}
+		$call( $this->createParserMockWithExternalImages( true, [], $output ) );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
+	 */
+	public function testParserFunctionsRequestTheModuleWhenTheyRenderATooltip(): void {
+		$this->assertModuleRequested(
+			static fn ( $parser ) => SimpleTooltipHooks::inlineTooltip( $parser, 'Text', 'Tip' ), true );
+		$this->assertModuleRequested(
+			static fn ( $parser ) => SimpleTooltipHooks::infoTooltip( $parser, 'Tip' ), true );
+		$this->assertModuleRequested(
+			static fn ( $parser ) => SimpleTooltipHooks::imgTooltip( $parser, 'https://example.com/a.png', 'Tip' ),
+			true );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
+	 */
+	public function testParserFunctionsDoNotRequestTheModuleWhenTheyRenderNothing(): void {
+		$this->assertModuleRequested(
+			static fn ( $parser ) => SimpleTooltipHooks::inlineTooltip( $parser, 'Text', '' ), false );
+		$this->assertModuleRequested(
+			static fn ( $parser ) => SimpleTooltipHooks::infoTooltip( $parser, '' ), false );
+		$this->assertModuleRequested(
+			static fn ( $parser ) => SimpleTooltipHooks::imgTooltip( $parser, 'https://example.com/a.png', '' ),
+			false );
 	}
 }
