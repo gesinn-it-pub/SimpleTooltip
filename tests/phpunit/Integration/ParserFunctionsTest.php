@@ -184,4 +184,36 @@ class ParserFunctionsTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertNotContains( 'ext.SimpleTooltip', $this->parseToOutput( 'Plain text' )->getModules() );
 	}
+
+	/**
+	 * Issue 14: a tooltip inside a list item must not break the list, and its content is a div, not a paragraph.
+	 *
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
+	 */
+	public function testTooltipInsideAnIndentedListKeepsTheListIntact(): void {
+		$html = $this->parse( ": Item 1\n:: Item 2 {{#tip-text: (Test) | Test }}\n:: Item 3" );
+
+		foreach ( [ 'dl', 'dd' ] as $tag ) {
+			$this->assertSame(
+				substr_count( $html, '<' . $tag ),
+				substr_count( $html, '</' . $tag . '>' ),
+				"<$tag> and </$tag> are balanced in: $html"
+			);
+		}
+		$this->assertStringContainsString(
+			'data-simple-tooltip="&lt;div class=&quot;simple-tooltip__content&quot;&gt;Test&lt;/div&gt;"',
+			$html
+		);
+		$this->assertStringNotContainsString( '&lt;p&gt;', $html, 'no paragraph in the tooltip text' );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
+	 */
+	public function testSeveralParagraphsInATooltipStayInsideTheDiv(): void {
+		$html = $this->parse( "{{#tip-info: One\n\nTwo}}" );
+
+		$this->assertStringContainsString( 'simple-tooltip__content&quot;&gt;&lt;p&gt;One', $html );
+		$this->assertStringContainsString( '&lt;p&gt;Two', $html );
+	}
 }

@@ -27,18 +27,33 @@ use PHPUnit\Framework\TestCase;
 class SimpleTooltipHooksTest extends TestCase {
 
 	/**
+	 * The tooltip HTML as it appears, escaped, in the data attribute
+	 *
+	 * @param string $escapedInner already escaped inner HTML
+	 * @return string
+	 */
+	private static function wrapped( string $escapedInner ): string {
+		return '&lt;div class=&quot;simple-tooltip__content&quot;&gt;' . $escapedInner . '&lt;/div&gt;';
+	}
+
+	/**
 	 * Parser whose parse methods return their input unchanged
 	 *
 	 * @param ParserOutput|null $output returned by getOutput(), a mock by default
+	 * @param string|null $fullParse result of recursiveTagParseFully(), the input by default
 	 * @return Parser&MockObject
 	 */
-	private function createParserMock( $output = null ): Parser {
+	private function createParserMock( $output = null, ?string $fullParse = null ): Parser {
 		$parserMock = $this->getMockBuilder( Parser::class )
 							->disableOriginalConstructor()
 							->getMock();
 		$parserMock->method( 'getOutput' )->willReturn( $output ?? $this->createParserOutputMock() );
 		$parserMock->method( 'recursiveTagParse' )->willReturnArgument( 0 );
-		$parserMock->method( 'recursiveTagParseFully' )->willReturnArgument( 0 );
+		if ( $fullParse === null ) {
+			$parserMock->method( 'recursiveTagParseFully' )->willReturnArgument( 0 );
+		} else {
+			$parserMock->method( 'recursiveTagParseFully' )->willReturn( $fullParse );
+		}
 		return $parserMock;
 	}
 
@@ -55,12 +70,14 @@ class SimpleTooltipHooksTest extends TestCase {
 	 * @param bool $allowExternal
 	 * @param string[] $allowedFrom
 	 * @param ParserOutput|null $output returned by getOutput(), a mock by default
+	 * @param string|null $fullParse result of recursiveTagParseFully(), the input by default
 	 * @return Parser&MockObject
 	 */
 	private function createParserMockWithExternalImages(
 		bool $allowExternal,
 		array $allowedFrom = [],
-		$output = null
+		$output = null,
+		?string $fullParse = null
 	): Parser {
 		$options = $this->getMockBuilder( ParserOptions::class )
 							->disableOriginalConstructor()
@@ -68,7 +85,7 @@ class SimpleTooltipHooksTest extends TestCase {
 		$options->method( 'getAllowExternalImages' )->willReturn( $allowExternal );
 		$options->method( 'getAllowExternalImagesFrom' )->willReturn( $allowedFrom );
 
-		$parserMock = $this->createParserMock( $output );
+		$parserMock = $this->createParserMock( $output, $fullParse );
 		$parserMock->method( 'getOptions' )->willReturn( $options );
 		return $parserMock;
 	}
@@ -91,7 +108,7 @@ class SimpleTooltipHooksTest extends TestCase {
 		$tooltip = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Inline text', 'Tooltip text' );
 
 		$expectedHtml = '<span class="simple-tooltip simple-tooltip-inline" ' .
-						'data-simple-tooltip="Tooltip content">Inline text</span>';
+						'data-simple-tooltip="' . self::wrapped( 'Tooltip content' ) . '">Inline text</span>';
 		$this->assertEquals( $expectedHtml, $tooltip[0] );
 	}
 
@@ -113,8 +130,11 @@ class SimpleTooltipHooksTest extends TestCase {
 		$parserMock = $this->createParserMock();
 
 		$result = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Display text', 'Say "hello"' );
-		$this->assertStringContainsString( 'data-simple-tooltip="Say &quot;hello&quot;"', $result[0] );
-		$this->assertStringNotContainsString( 'data-simple-tooltip="Say "', $result[0] );
+		$this->assertStringContainsString(
+			'data-simple-tooltip="' . self::wrapped( 'Say &quot;hello&quot;' ) . '"',
+			$result[0]
+		);
+		$this->assertStringNotContainsString( 'Say "hello"', $result[0] );
 	}
 
 	/**
@@ -142,8 +162,11 @@ class SimpleTooltipHooksTest extends TestCase {
 		$parserMock = $this->createParserMock();
 
 		$result = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Text', '<b>x</b>' );
-		$this->assertStringContainsString( 'data-simple-tooltip="&lt;b&gt;x&lt;/b&gt;"', $result[0] );
-		$this->assertStringNotContainsString( 'data-simple-tooltip="<b>', $result[0] );
+		$this->assertStringContainsString(
+			'data-simple-tooltip="' . self::wrapped( '&lt;b&gt;x&lt;/b&gt;' ) . '"',
+			$result[0]
+		);
+		$this->assertStringNotContainsString( '<b>x</b>', $result[0] );
 	}
 
 	/**
@@ -175,10 +198,10 @@ class SimpleTooltipHooksTest extends TestCase {
 		$parserMock = $this->createParserMock();
 
 		$inline = SimpleTooltipHooks::inlineTooltip( $parserMock, 'Text', '0' );
-		$this->assertStringContainsString( 'data-simple-tooltip="0"', $inline[0] );
+		$this->assertStringContainsString( 'data-simple-tooltip="' . self::wrapped( '0' ) . '"', $inline[0] );
 
 		$info = SimpleTooltipHooks::infoTooltip( $parserMock, '0' );
-		$this->assertStringContainsString( 'data-simple-tooltip="0"', $info[0] );
+		$this->assertStringContainsString( 'data-simple-tooltip="' . self::wrapped( '0' ) . '"', $info[0] );
 	}
 
 	/**
@@ -189,7 +212,8 @@ class SimpleTooltipHooksTest extends TestCase {
 
 		$tooltip = SimpleTooltipHooks::infoTooltip( $parserMock, 'Tooltip text' );
 
-		$expectedHtml = '<span class="simple-tooltip simple-tooltip-info" data-simple-tooltip="Tooltip text"></span>';
+		$expectedHtml = '<span class="simple-tooltip simple-tooltip-info" data-simple-tooltip="' .
+			self::wrapped( 'Tooltip text' ) . '"></span>';
 		$this->assertEquals( $expectedHtml, $tooltip[0] );
 	}
 
@@ -215,7 +239,10 @@ class SimpleTooltipHooksTest extends TestCase {
 					->willReturn( '<i>Hi</i>' );
 
 		$result = SimpleTooltipHooks::infoTooltip( $parserMock, "''Hi''" );
-		$this->assertStringContainsString( 'data-simple-tooltip="&lt;i&gt;Hi&lt;/i&gt;"', $result[0] );
+		$this->assertStringContainsString(
+			'data-simple-tooltip="' . self::wrapped( '&lt;i&gt;Hi&lt;/i&gt;' ) . '"',
+			$result[0]
+		);
 	}
 
 	/**
@@ -223,8 +250,11 @@ class SimpleTooltipHooksTest extends TestCase {
 	 */
 	public function testInfoTooltipEscapesHtmlSpecialChars(): void {
 		$result = SimpleTooltipHooks::infoTooltip( $this->createParserMock(), 'A &gt; B' );
-		$this->assertStringContainsString( 'data-simple-tooltip="A &amp;gt; B"', $result[0] );
-		$this->assertStringNotContainsString( 'data-simple-tooltip="A &gt;', $result[0] );
+		$this->assertStringContainsString(
+			'data-simple-tooltip="' . self::wrapped( 'A &amp;gt; B' ) . '"',
+			$result[0]
+		);
+		$this->assertStringNotContainsString( 'A &gt; B', $result[0] );
 	}
 
 	/**
@@ -236,7 +266,10 @@ class SimpleTooltipHooksTest extends TestCase {
 		$tooltip = SimpleTooltipHooks::imgTooltip( $parserMock, 'https://example.com/a.png', 'Tooltip text' );
 
 		$this->assertStringContainsString( 'class="simple-tooltip simple-tooltip-img"', $tooltip[0] );
-		$this->assertStringContainsString( 'data-simple-tooltip="Tooltip text"', $tooltip[0] );
+		$this->assertStringContainsString(
+			'data-simple-tooltip="' . self::wrapped( 'Tooltip text' ) . '"',
+			$tooltip[0]
+		);
 		$this->assertStringContainsString( 'src="https://example.com/a.png"', $tooltip[0] );
 		$this->assertTrue( $tooltip['isHTML'] );
 	}
@@ -266,7 +299,10 @@ class SimpleTooltipHooksTest extends TestCase {
 					->willReturn( '<b>Bold</b>' );
 
 		$result = SimpleTooltipHooks::imgTooltip( $parserMock, 'https://example.com/a.png', "'''Bold'''" );
-		$this->assertStringContainsString( 'data-simple-tooltip="&lt;b&gt;Bold&lt;/b&gt;"', $result[0] );
+		$this->assertStringContainsString(
+			'data-simple-tooltip="' . self::wrapped( '&lt;b&gt;Bold&lt;/b&gt;' ) . '"',
+			$result[0]
+		);
 	}
 
 	/**
@@ -357,5 +393,44 @@ class SimpleTooltipHooksTest extends TestCase {
 		$this->assertModuleRequested(
 			static fn ( $parser ) => SimpleTooltipHooks::imgTooltip( $parser, 'https://example.com/a.png', '' ),
 			false );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::inlineTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::imgTooltip
+	 */
+	public function testTooltipContentHasNoOuterParagraphAndIsWrappedInADiv(): void {
+		$parserMock = $this->createParserMockWithExternalImages( true, [], null, "<p>Text with <b>bold</b>\n</p>" );
+
+		$results = [
+			SimpleTooltipHooks::inlineTooltip( $parserMock, 'Shown', 'Tip' ),
+			SimpleTooltipHooks::infoTooltip( $parserMock, 'Tip' ),
+			SimpleTooltipHooks::imgTooltip( $parserMock, 'https://example.com/a.png', 'Tip' ),
+		];
+
+		foreach ( $results as $result ) {
+			$this->assertStringContainsString(
+				'data-simple-tooltip="' . self::wrapped( 'Text with &lt;b&gt;bold&lt;/b&gt;' ) . '"',
+				$result[0]
+			);
+			$this->assertStringNotContainsString( '&lt;p&gt;', $result[0] );
+		}
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\SimpleTooltip\SimpleTooltipHooks::infoTooltip
+	 */
+	public function testSeveralParagraphsKeepTheirParagraphsInsideTheDiv(): void {
+		$parserMock = $this->createParserMock( null, "<p>One\n</p>\n<p>Two\n</p>" );
+
+		$result = SimpleTooltipHooks::infoTooltip( $parserMock, 'Tip' );
+
+		$this->assertStringContainsString( '&lt;p&gt;One', $result[0] );
+		$this->assertStringContainsString( '&lt;p&gt;Two', $result[0] );
+		$this->assertStringContainsString(
+			'data-simple-tooltip="&lt;div class=&quot;simple-tooltip__content&quot;&gt;&lt;p&gt;One',
+			$result[0]
+		);
 	}
 }

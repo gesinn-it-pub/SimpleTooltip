@@ -132,9 +132,14 @@ class SimpleTooltipHooks {
 
 	/**
 	 * Parse the wikitext of a tooltip. The result is HTML that ends up in an escaped attribute.
+	 *
+	 * A single outer paragraph is removed because it adds margins inside the tooltip, and the content
+	 * is wrapped in a div, which is valid for block content such as lists or several paragraphs.
 	 */
 	private static function parseTooltipText( Parser $parser, string $wikitext ): string {
-		return trim( $parser->recursiveTagParseFully( $wikitext ) );
+		$html = trim( Parser::stripOuterParagraph( $parser->recursiveTagParseFully( $wikitext ) ) );
+
+		return Html::rawElement( 'div', [ 'class' => 'simple-tooltip__content' ], $html );
 	}
 
 	/**

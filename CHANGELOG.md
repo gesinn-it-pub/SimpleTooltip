@@ -4,6 +4,9 @@
 
 ### Changed
 
+- The tooltip content is wrapped in `<div class="simple-tooltip__content">` instead of a `<span>`, and a single
+  outer paragraph (`<p>`) is removed, which added margins inside the tooltip. Several paragraphs, lists and other
+  block content are kept inside the div. Custom CSS that targets `p` or `span` inside a tooltip may need an update.
 - The `ext.SimpleTooltip` module is no longer added to every page. The parser functions request it for the page
   that uses them (`ParserOutput::addModules`), and the `BeforePageDisplay` hook is gone. Note for PageForms: up to
   and including PageForms 2.4.0 the modules of a form's parser output are lost after a preview, a diff or a failed

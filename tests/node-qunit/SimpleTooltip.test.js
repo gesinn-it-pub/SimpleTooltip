@@ -216,4 +216,10 @@ QUnit.module( 'SimpleTooltip', ( hooks ) => {
 		$container.remove();
 	} );
 
+	QUnit.test( 'trigger puts the tooltip content in a div, not in an inline element', ( assert ) => {
+		const opts = triggerWith( '<p>block content</p>', false );
+		assert.true( opts.content.is( 'div' ), 'content root is a div' );
+		assert.strictEqual( opts.content.find( 'p' ).length, 1, 'block elements inside are kept' );
+	} );
+
 } );
