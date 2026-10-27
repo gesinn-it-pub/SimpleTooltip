@@ -9,7 +9,7 @@ image:https://codecov.io/github/gesinn-it-pub/SimpleTooltip/graph/badge.svg?toke
 == Documentation
 For documentation see: https://www.mediawiki.org/wiki/Extension:SimpleTooltip
 
-include::docs/gesinn-it-docs-master-pub/sections/universal/semver.adoc[]
+include::docs/gesinn-it-docs-master-pub/sections/universal/semver-policy.adoc[]
 
 == Contributing
 
