@@ -12,3 +12,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # eslint 9+ needs the flat config format and a matching eslint-config-wikimedia
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      # MediaWiki still ships jQuery 3; the tests should run against the same major version
+      - dependency-name: "jquery"
+        update-types: ["version-update:semver-major"]
