@@ -54,6 +54,9 @@ class SimpleTooltipHooks {
 			return [];
 		}
 
+		// The tooltip is parsed HTML that is deliberately escaped once more to live in an attribute
+		// (the browser decodes it once); that is the double escaping Phan reports.
+		// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 		$html = Html::rawElement(
 			'span',
 			[
@@ -78,6 +81,8 @@ class SimpleTooltipHooks {
 			return [];
 		}
 
+		// Parsed HTML is escaped again on purpose, see inlineTooltip()
+		// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 		$html = Html::element(
 			'span',
 			[
@@ -114,6 +119,8 @@ class SimpleTooltipHooks {
 			) );
 		}
 
+		// Parsed HTML is escaped again on purpose, see inlineTooltip()
+		// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 		$html = Html::element(
 			'img',
 			[
