@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # mediawiki-codesniffer 52+ needs PHP 8.3, but the MediaWiki 1.39 CI leg runs on PHP 8.2
+      - dependency-name: "mediawiki/mediawiki-codesniffer"
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"

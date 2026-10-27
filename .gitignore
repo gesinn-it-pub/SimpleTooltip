@@ -1,2 +1,12 @@
 ## Directory-based project format:
 .idea/
+
+# Dependencies
+/vendor/
+/node_modules/
+package-lock.json
+
+# Test and coverage output
+/coverage/
+/.nyc_output/
+.phpunit.result.cache
