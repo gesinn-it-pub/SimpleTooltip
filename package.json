@@ -6,7 +6,7 @@
 		"test-coverage": "npm run lint:js && npm run node-qunit-coverage",
 		"lint:js": "eslint lib/SimpleTooltip.js tests/node-qunit/",
 		"node-qunit": "qunit --require ./tests/node-qunit/setup.js 'tests/node-qunit/*.test.js'",
-		"node-qunit-coverage": "nyc --reporter=text --reporter=html --reporter=clover --all --include='lib/SimpleTooltip.js' --report-dir=coverage/js npm run node-qunit"
+		"node-qunit-coverage": "nyc --reporter=text --reporter=html --reporter=lcovonly --all --include='lib/SimpleTooltip.js' --report-dir=coverage/js npm run node-qunit"
 	},
 	"devDependencies": {
 		"eslint": "^8.57.0",

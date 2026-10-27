@@ -72,7 +72,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: gesinn-it-pub/SimpleTooltip
-          files: build/coverage/php/coverage.xml,build/coverage/js/clover.xml
+          files: build/coverage/php/coverage.xml,build/coverage/js/lcov.info
         if: matrix.coverage == true
 
       - name: Run Phan
