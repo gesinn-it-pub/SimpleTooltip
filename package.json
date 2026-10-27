@@ -9,7 +9,7 @@
 		"node-qunit-coverage": "nyc --reporter=text --reporter=html --reporter=lcovonly --all --include='lib/SimpleTooltip.js' --report-dir=coverage/js npm run node-qunit"
 	},
 	"devDependencies": {
-		"eslint": "^8.57.0",
+		"eslint": "^10.13.0",
 		"eslint-config-wikimedia": "0.32.3",
 		"jsdom": "^20.0.3",
 		"jquery": "^3.7.1",
