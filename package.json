@@ -4,7 +4,7 @@
 	"scripts": {
 		"test": "npm run lint:js && npm run node-qunit",
 		"test-coverage": "npm run lint:js && npm run node-qunit-coverage",
-		"lint:js": "eslint lib/SimpleTooltip.js tests/node-qunit/",
+		"lint:js": "eslint lib/SimpleTooltip.js tests/node-qunit/ tests/browser/",
 		"node-qunit": "qunit --require ./tests/node-qunit/setup.js 'tests/node-qunit/*.test.js'",
 		"node-qunit-coverage": "nyc --reporter=text --reporter=html --reporter=lcovonly --all --include='lib/SimpleTooltip.js' --report-dir=coverage/js npm run node-qunit"
 	},

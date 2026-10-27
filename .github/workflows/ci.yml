@@ -35,6 +35,7 @@ jobs:
             database_type: mysql
             database_image: "mysql:8"
             coverage: true
+            browser: true
             experimental: false
           - mediawiki_version: '1.46'
             php_version: 8.5
@@ -48,6 +49,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php_version }}
       DB_TYPE: ${{ matrix.database_type }}
       DB_IMAGE: ${{ matrix.database_image }}
+      BROWSER_TESTS: ${{ matrix.browser }}
 
       
     steps:
@@ -66,6 +68,10 @@ jobs:
       - name: Run tests with coverage
         run: mkdir -p build/coverage && make ci-coverage
         if: matrix.coverage == true
+
+      - name: Run browser smoke test
+        run: make browser-test
+        if: matrix.browser == true
 
       - name: Upload code coverage
         uses: codecov/codecov-action@v7

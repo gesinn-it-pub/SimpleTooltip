@@ -8,6 +8,25 @@
 	"env": { "commonjs": true },
 	"overrides": [
 		{
+			"files": [ "tests/browser/**/*.js" ],
+			"env": {
+				"node": true,
+				"browser": true
+			},
+			"parserOptions": {
+				"ecmaVersion": 2022
+			},
+			"rules": {
+				"no-jquery/variable-pattern": "off",
+				"no-jquery/no-global-selector": "off",
+				"no-jquery/no-parse-html-literal": "off",
+				"no-console": "off",
+				"n/no-process-exit": "off",
+				"es-x/no-async-functions": "off",
+				"es-x/no-object-values": "off"
+			}
+		},
+		{
 			"files": [ "tests/node-qunit/**/*.js" ],
 			"env": {
 				"node": true
