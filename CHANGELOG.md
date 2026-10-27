@@ -11,6 +11,11 @@
   and `$wgAllowExternalImagesFrom`); otherwise an error message is shown. Images get an empty `alt`.
 - `"` in tooltip text is no longer replaced by `'`; the attribute is escaped properly instead.
 
+### Documentation
+
+- `lib/README.md` documents the bundled Tooltipster 3.3.0 (source, license, unmodified, no upstream maintenance) and
+  the README links to its GitHub repository.
+
 ### Dependencies
 
 - Development tools: mediawiki-codesniffer 43.0.0 to 51.0.2, mediawiki-phan-config 0.14.0 to 0.20.0 (Phan 6),
