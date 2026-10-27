@@ -25,10 +25,6 @@
 	},
 	"ResourceModules": {
 		"ext.SimpleTooltip": {
-			"targets": [
-				"mobile",
-				"desktop"
-			],
 			"scripts": [
 				"lib/jquery.tooltipster.js",
 				"lib/SimpleTooltip.js"
@@ -42,11 +38,6 @@
 	"ResourceFileModulePaths": {
 		"localBasePath": "",
 		"remoteExtPath": "SimpleTooltip"
-	},
-	"config": {
-		"SimpleTooltipSubmitText": {
-			"value": "NEW"
-		}
 	},
 	"Hooks": {
 		"BeforePageDisplay": "MediaWiki\\Extension\\SimpleTooltip\\SimpleTooltipHooks::onBeforePageDisplay",

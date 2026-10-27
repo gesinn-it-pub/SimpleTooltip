@@ -11,6 +11,11 @@
   and `$wgAllowExternalImagesFrom`); otherwise an error message is shown. Images get an empty `alt`.
 - `"` in tooltip text is no longer replaced by `'`; the attribute is escaped properly instead.
 
+### Removed
+
+- The unused legacy i18n shim `SimpleTooltip.i18n.php` (it registered a function that did not exist), the
+  obsolete `targets` ResourceLoader setting and the unused `SimpleTooltipSubmitText` setting.
+
 ### Fixed
 
 - `{{#tip-text: a}}` and `{{#tip-img: url}}` without a tooltip text no longer raise a PHP warning, and the
