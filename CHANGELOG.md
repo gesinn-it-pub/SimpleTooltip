@@ -11,6 +11,11 @@
   and `$wgAllowExternalImagesFrom`); otherwise an error message is shown. Images get an empty `alt`.
 - `"` in tooltip text is no longer replaced by `'`; the attribute is escaped properly instead.
 
+### Dependencies
+
+- Development tools: mediawiki-codesniffer 43.0.0 to 51.0.2, mediawiki-phan-config 0.14.0 to 0.20.0 (Phan 6),
+  minus-x 1.1.3 to 2.0.1. They need PHP 8.2, so the MediaWiki 1.39 CI leg runs on PHP 8.2.
+
 ### Removed
 
 - The unused legacy i18n shim `SimpleTooltip.i18n.php` (it registered a function that did not exist), the
