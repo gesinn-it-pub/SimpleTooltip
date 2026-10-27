@@ -30,7 +30,9 @@ global.mw = {
 			hookHandlers[ name ] = ( hookHandlers[ name ] || [] ).concat( fn );
 		}
 	} ),
-	fireHook: ( name, ...args ) => ( hookHandlers[ name ] || [] ).forEach( ( fn ) => fn( ...args ) ),
+	fireHook: ( name, ...args ) => {
+		( hookHandlers[ name ] || [] ).forEach( ( fn ) => fn( ...args ) );
+	},
 	registeredHooks: () => Object.keys( hookHandlers )
 };
 
