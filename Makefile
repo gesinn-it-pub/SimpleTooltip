@@ -41,6 +41,9 @@ endif
 # Set BROWSER_TESTS=true explicitly (or in .env) to run "make browser-test" locally.
 BROWSER_TESTS?=
 
+# coverage: PCOV is several times faster than Xdebug (line coverage only)
+COVERAGE_DRIVER?=pcov
+
 # check for build dir and git submodule init if it does not exist
 include build/Makefile
 
