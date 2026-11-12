@@ -13,7 +13,7 @@
 		"eslint-config-wikimedia": "0.32.6",
 		"jsdom": "^20.0.3",
 		"jquery": "^3.7.1",
-		"nyc": "^15.1.0",
+		"nyc": "^18.0.0",
 		"qunit": "^2.21.0"
 	}
 }
